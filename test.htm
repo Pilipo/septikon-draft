@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.createjs.com/easeljs-0.7.0.min.js"></script>
+	<script>
+	function init() 
+	{
+		function show(what) {
+			console.log(what);
+		}
+		
+		var base_rate = 3;
+		
+		var stage = new createjs.Stage("demoCanvas");
+		stage.enableMouseOver(20);
+		createjs.Ticker.addEventListener("tick", stage);
+		createjs.Ticker.addEventListener("tick", sample);
+		
+		var shape =new createjs.Shape();
+		var shapes = {};
+		shape.graphics.beginFill("#ff0000").drawRect(0,0,100,100);
+		shape.name = "original";
+		shapes[shape.name]=shape;
+		shape.hitArea = new createjs.Shape(new createjs.Graphics().beginFill("#f00").drawRect(0,0,100,100));
+		shape.alpha = 0;
+		shape.on("rollover", function(evt){is_fading_in[evt.target.name] = true;});
+		shape.on("rollout", function(evt){is_fading_in[evt.target.name] = false;});
+		stage.addChild(shape);
+		 
+		for(var i =0; i<10; i++)
+		{
+			new_shape = shape.clone(false);
+			new_shape.name = "myshape"+i;
+			new_shape.x = (i+1)*100;
+			new_shape.hitArea = new createjs.Shape(new createjs.Graphics().beginFill("#f00").drawRect(0,0,100,100));
+			new_shape.on("rollover", function(evt){is_fading_in[evt.target.name] = true;});
+			new_shape.on("rollout", function(evt){is_fading_in[evt.target.name] = false;});
+			
+			shapes[new_shape.name]=new_shape;
+			stage.addChild(new_shape);
+		}
+		
+		var is_fading_in = {};
+		
+		function sample(event){
+			
+			for(fading_shape in is_fading_in)
+			{
+				//show(shapes[fading_shape].alpha);
+				if(is_fading_in[fading_shape] == true)
+				{
+					shapes[fading_shape].alpha += Math.abs(shapes[fading_shape].alpha - 1) / base_rate;
+					if(Math.round(shapes[fading_shape].alpha/0.1) >= 10)
+						shapes[fading_shape].alpha = 1;
+				}
+				else
+				{
+					shapes[fading_shape].alpha += (0 - shapes[fading_shape].alpha) / base_rate;
+					if(Math.round(shapes[fading_shape].alpha/0.01) <= 0){
+						shapes[fading_shape].alpha = 0;
+						delete is_fading_in[fading_shape];
+					}
+				}
+			}
+		}
+		
+		
+	}
+	</script>
+</head>
+<body onLoad="init();">
+    <canvas id="demoCanvas" width="1480" height="1100">
+        alternate content
+    </canvas>
+</body>
+</html>

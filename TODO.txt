@@ -1,0 +1,24 @@
+ - grid legal initial clone placement
+ - calculate legal moves for all clones on screen
+ - represent tile damage and reflect this status in legal move check
+ - grid lock placement
+ - include locks in legal move check
+ - script resource logic including (adding, removing, damage calculation)
+ - grid tile info for mouse hover info pop up
+ - implement wrapper for grid information (walls, start locations, legal move locations, buffs, etc)
+ - 
+ 
+ TILE
+	x
+	y
+	wall
+	is_start
+	is_lock
+	is_rec_energy
+	is_rec_metal
+	is_rec_rocket
+	is_rec_oxygen
+	is_rec_nuke
+	is_rec_merc
+	is_rec_biomass
+	is_surface?
