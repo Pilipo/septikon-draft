@@ -227,58 +227,6 @@
 			
 			
 			
-			var sidebar = new createjs.Shape();
-			sidebar.graphics.beginFill("#000");
-			sidebar.graphics.drawRect(0,0,500,board_bg.image.height * 0.75);
-			sidebar.x = board_bg.image.width + 10;
-			stage.addChild(sidebar);
-			
-			var roll_btn = new createjs.Text("Roll"); 
-			roll_btn.font = "bold 150px Arial";
-			roll_btn.color = "#fff";
-			roll_btn.x = sidebar.x; 
-			var hit = new createjs.Shape();
-			hit.graphics.beginFill("#000").drawRect(0, 0, 500, roll_btn.getMeasuredHeight());
-			roll_btn.hitArea = hit;
-			roll_btn.alpha = 0.5;
-			roll_btn.on("mouseover", handleInteraction);
-			roll_btn.on("mouseout", handleInteraction);
-			roll_btn.on("click", rollDice);
-			function handleInteraction(event) {
-				event.target.alpha = (event.type == "mouseover") ? 1 : 0.5; 
-			}	
-			stage.addChild(roll_btn);
-			
-			var text = new createjs.Text();
-			
-			function rollDice()
-			{
-				if(roll_btn.text == "Roll"){
-				
-					result = (Math.ceil(Math.random()*6));
-					text.text = result;
-					text.font = "bold 150px Arial";
-					text.color = "#fff";
-					text.x = sidebar.x + 225;
-					text.y = 200;
-					
-					roll_btn.text = "Clear";
-					stage.addChild(text);
-				}else{
-					stage.removeChild(text);
-					roll_btn.text = "Roll";
-				}
-				
-				
-				stage.update();
-			}
-			
-			
-			
-			
-			
-			
-			
             
             document.onkeydown = handleKeyDown;
             document.onkeyup = handleKeyUp;
