@@ -36,11 +36,13 @@ function create() {
     game.text = game.add.text(250, 5, '', { fill: '#ffffff' });
 
     var tileArray = CreateHitTiles();
-    console.log (tileArray);
     
     //END TESTING
     
-    clone = game.add.sprite(81, 37, 'clone');
+    clone = game.add.sprite(xCoordsToPixel(0), yCoordsToPixel(0), 'clone');
+    clone.xCoord = 0;
+    clone.yCoord = 0;
+    clone.anchor.set(0.5);
     game.physics.arcade.enable(clone);
     clone.scale.setTo(0.25);
     clone.angle = 90;   
@@ -54,7 +56,6 @@ function create() {
         right: game.input.keyboard.addKey(Phaser.Keyboard.D),
     };
     
-    console.log(clone);
 }
 
 var movementRate = 150;
@@ -72,28 +73,40 @@ function update() {
     
     if (this.wasd.left.isDown && !this.isMovingX)
     {
-        this.isMovingX = true;
-        this.previousX = clone.body.x;
-        this.targetX = this.previousX-29;
+        if(checkWall("West", clone.xCoord, clone.yCoord)) {
+            this.isMovingX = true;
+            this.previousX = clone.body.x;
+            this.targetX = this.previousX-29;
+            clone.xCoord--;
+        }
     }
     else if (this.wasd.right.isDown && !this.isMovingX)
     {
-        this.isMovingX = true;
-        this.previousX = clone.body.x;
-        this.targetX = this.previousX+29;
+        if(checkWall("East", clone.xCoord, clone.yCoord)) {
+            this.isMovingX = true;
+            this.previousX = clone.body.x;
+            this.targetX = this.previousX+29;
+            clone.xCoord++;
+        }
     }
     
     if (this.wasd.up.isDown && !this.isMovingY)
     {
-        this.isMovingY = true;
-        this.previousY = clone.body.y;
-        this.targetY = this.previousY-29;
+        if(checkWall("North", clone.xCoord, clone.yCoord)) {
+            this.isMovingY = true;
+            this.previousY = clone.body.y;
+            this.targetY = this.previousY-29;
+            clone.yCoord--;
+        }
     }
     else if (this.wasd.down.isDown && !this.isMovingY)
     {
-        this.isMovingY = true;
-        this.previousY = clone.body.y;
-        this.targetY = this.previousY+29;
+        if(checkWall("South", clone.xCoord, clone.yCoord)) {
+            this.isMovingY = true;
+            this.previousY = clone.body.y;
+            this.targetY = this.previousY+29;
+            clone.yCoord++;
+        }
     }
     
     if(this.isMovingX) {

@@ -1,0 +1,339 @@
+{
+	{
+		"id": "000",
+		"type": "space",
+		"name": "space"
+	},
+	{
+		"id": "001",
+		"type": "battle",
+		"name": "thermite",
+		"properties": {
+			"resourceCostType": "biomass",
+			"resourceCostCount": 2,
+			"callback": "fireThermite",
+			"gunnerTargetID": null
+		}
+	},
+	{
+		"id": "002",
+		"type": "battle",
+		"name": "shield",
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 1,
+			"callback": "fireShield",
+			"gunnerTargetID": null
+		}
+	},
+	{
+		"id": "003",
+		"type": "battle",
+		"name": "biodrone"
+		"properties": {
+			"resourceCostType": "biodrone",
+			"resourceCostCount": 1,
+			"callback": "fireBiodrone",
+			"gunnerTargetID": null
+		}
+	},
+	{
+		"id": "004",
+		"type": "battle",
+		"name": "satellite"
+		"properties": {
+			"resourceCostType": "metal",
+			"resourceCostCount": 1,
+			"callback": "fireSatellite",
+			"gunnerTargetID": null
+		}
+	},
+	{
+		"id": "005",
+		"type": "battle",
+		"name": "laser"
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 1,
+			"callback": "fireLaser",
+			"gunnerTargetID": null
+		}
+	},
+	{
+		"id": "006",
+		"type": "battle",
+		"name": "repair"
+		"properties": {
+			"resourceCostType": "metal",
+			"resourceCostCount": 1,
+			"callback": "repairTile",
+			"tileTargetID": null
+		}
+},
+	{
+		"id": "007",
+		"type": "battle",
+		"name": "rocket"
+		"properties": {
+			"resourceCostType": "rocket",
+			"resourceCostCount": 1,
+			"callback": "fireRocket",
+			"gunnerTargetID": null
+		}
+},
+		{
+		"id": "008",
+		"type": "battle",
+		"name": "espionage"
+		"properties": {
+			"resourceCostType": "biomass",
+			"resourceCostCount": 3,
+			"callback": "commitEspionage",
+			"cloneTargetID": null
+		}
+},
+	{
+		"id": "009",
+		"type": "battle",
+		"name": "takeover",
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 2,
+			"callback": "takeoverSatellite",
+			"satelliteTargetID": null
+		}
+	},
+	{
+		"id": "010",
+		"type": "battle",
+		"name": "repairTwo"
+		"properties": {
+			"resourceCostType": ["energy","oxygen"],
+			"resourceCostCount": [1,1],
+			"callback": "repairTwo",
+			"tileTargetIDs": null
+		}
+	},
+	{
+		"id": "011",
+		"type": "battle",
+		"name": "counterEspionage"
+		"properties": {
+			"resourceCostType": ["biomass","oxygen"],
+			"resourceCostCount": [1,1],
+			"callback": "counterEspionage",
+			"cloneTargetIDs": null
+		}
+	},
+	{
+		"id": "012",
+		"type": "surface",
+		"name": "surface"
+	},
+	{
+		"id": "013",
+		"type": "lock",
+		"name": "lock"
+	},
+	{
+		"id": "014",
+		"type": "armory",
+		"name": "drill"
+	},
+	{
+		"id": "015",
+		"type": "armory",
+		"name": "cannon"
+	},
+	{
+		"id": "016",
+		"type": "armory",
+		"name": "explosives"
+	},
+	{
+		"id": "017",
+		"type": "production",
+		"name": "lichen"
+		"properties": {
+			"resourceCostType": null,
+			"resourceCostCount": 0,
+			"resourceYieldType": "biomass",
+			"resourceYieldCount": 1
+		},
+	{
+		"id": "018",
+		"type": "production",
+		"name": "lichen two"
+		"properties": {
+			"resourceCostType": null,
+			"resourceCostCount": 0,
+			"resourceYieldType": "biomass",
+			"resourceYieldCount": 2
+		},
+	},
+	{
+		"id": "019",
+		"type": "production",
+		"name": "chemical reactor"
+		"properties": {
+			"resourceCostType": "biomass",
+			"resourceCostCount": 1,
+			"resourceYieldType": "oxygen",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "020",
+		"type": "production",
+		"name": "chemical reactor two"
+		"properties": {
+			"resourceCostType": "biomass",
+			"resourceCostCount": 2,
+			"resourceYieldType": "oxygen",
+			"resourceYieldCount": 2
+		},
+	},
+	{
+		"id": "021",
+		"type": "production",
+		"name": "air filter"
+		"properties": {
+			"resourceCostType": "oxygen",
+			"resourceCostCount": 2,
+			"resourceYieldType": "oxygen",
+			"resourceYieldCount": 3
+		},
+	},
+	{
+		"id": "022",
+		"type": "production",
+		"name": "biocollector"
+		"properties": {
+			"resourceCostType": ["oxygen","biomass"],
+			"resourceCostCount": [1,1],
+			"resourceYieldType": "biodrone",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "023",
+		"type": "production",
+		"name": "uranium mine"
+		"properties": {
+			"resourceCostType": ["oxygen","energy"],
+			"resourceCostCount": [1,1],
+			"resourceYieldType": "uranium",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "024",
+		"type": "production",
+		"name": "nuclear reactor"
+		"properties": {
+			"resourceCostType": "uranium",
+			"resourceCostCount": 1,
+			"resourceYieldType": "energy",
+			"resourceYieldCount": 3
+		},
+	},
+	{
+		"id": "025",
+		"type": "production",
+		"name": "thermal generator"
+		"properties": {
+			"resourceCostType": "biomass",
+			"resourceCostCount": 1,
+			"resourceYieldType": "energy",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "026",
+		"type": "production",
+		"name": "foundry"
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 1,
+			"resourceYieldType": "metal",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "027",
+		"type": "production",
+		"name": "foundry two"
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 2,
+			"resourceYieldType": "metal",
+			"resourceYieldCount": 2
+		},
+	},
+	{
+		"id": "028",
+		"type": "production",
+		"name": "rocket workshop"
+		"properties": {
+			"resourceCostType": "energy",
+			"resourceCostCount": 1,
+			"resourceYieldType": "rocket",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "029",
+		"type": "production",
+		"name": "sensor cabin"
+		"properties": {
+			"callback": "consumeEnemyBiodrone",
+			"biodroneTargetID": null
+		}
+	},
+	{
+		"id": "030",
+		"type": "production",
+		"name": "nuclear armory"
+		"properties": {
+			"resourceCostType": ["oxygen", "energy", "uranium"],
+			"resourceCostCount": [1,1,1],
+			"resourceYieldType": "nuke",
+			"resourceYieldCount": 1
+		},
+	},
+	{
+		"id": "031",
+		"type": "warehouse",
+		"name": "oxygen"
+	},
+	{
+		"id": "032",
+		"type": "warehouse",
+		"name": "rocket"
+	},
+	{
+		"id": "033",
+		"type": "warehouse",
+		"name": "metal"
+	},
+	{
+		"id": "034",
+		"type": "warehouse",
+		"name": "energy"
+	},
+	{
+		"id": "035",
+		"type": "warehouse",
+		"name": "biomass"
+	},
+	{
+		"id": "036",
+		"type": "warehouse",
+		"name": "biodrone"
+	},
+	{
+		"id": "037",
+		"type": "warehouse",
+		"name": "uranium"
+	},
+}
