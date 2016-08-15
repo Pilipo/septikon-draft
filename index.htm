@@ -4,6 +4,8 @@
 	<meta charset="UTF-8" />
 	<title>Septikon</title>
     <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+    <script src="js/wall_grid.js"></script>
+    <script src="js/septikon.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -16,10 +18,7 @@
 
 var game = new Phaser.Game(1000, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-function preload() {
-    game.load.script('filterX', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurX.js');
-    game.load.script('filterY', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurY.js');
-    
+function preload() { 
     game.load.image('board', 'assets/medium_board.png');
     game.load.image('clone', 'assets/clone.png');
 }
@@ -32,11 +31,19 @@ function create() {
     game.physics.startSystem(Phaser.Physics.Arcade);
     
     game.add.sprite(0, 0, 'board');
+    
+    //TESTING
+    game.text = game.add.text(250, 5, '', { fill: '#ffffff' });
+
+    var tileArray = CreateHitTiles();
+    console.log (tileArray);
+    
+    //END TESTING
+    
     clone = game.add.sprite(81, 37, 'clone');
     game.physics.arcade.enable(clone);
     clone.scale.setTo(0.25);
-    clone.angle = 90;
-    
+    clone.angle = 90;   
 
     this.cursors = game.input.keyboard.createCursorKeys();
 
