@@ -4,6 +4,7 @@
 	<meta charset="UTF-8" />
 	<title>Septikon</title>
     <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="js/wall_grid.js"></script>
     <script src="js/septikon.js"></script>
     <style type="text/css">
@@ -13,8 +14,14 @@
     </style>
 </head>
 <body>
+    
 
 <script type="text/javascript">
+$(function () {   
+    $.getJSON( "js/tiles.json", function( data ) {
+      console.log(data);
+    });
+});
 
 var game = new Phaser.Game(1000, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
