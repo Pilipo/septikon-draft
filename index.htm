@@ -5,6 +5,7 @@
 	<title>Septikon</title>
     <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    
     <script src="js/wall_grid.js"></script>
     <script src="js/septikon.js"></script>
     <style type="text/css">
@@ -17,11 +18,6 @@
     
 
 <script type="text/javascript">
-$(function () {   
-    $.getJSON( "js/tiles.json", function( data ) {
-      console.log(data);
-    });
-});
 
 var game = new Phaser.Game(1000, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
@@ -33,6 +29,7 @@ function preload() {
 var clone;
 var wasd;
 var cursors;
+var tileManager;
 
 function create() {
     game.physics.startSystem(Phaser.Physics.Arcade);
@@ -40,9 +37,13 @@ function create() {
     game.add.sprite(0, 0, 'board');
     
     //TESTING
-    game.text = game.add.text(250, 5, '', { fill: '#ffffff' });
+    game.helpTitle = game.add.text(50, 5, '', { fill: '#ffffff' });
+    game.helpInfo = game.add.text(50, 670, '', { fill: '#dddddd' });
 
-    var tileArray = CreateHitTiles();
+    tileManager = CreateHitTiles();
+    
+    
+
     
     //END TESTING
     
