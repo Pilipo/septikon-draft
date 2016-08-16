@@ -16,22 +16,20 @@ var counter = 0;
 
 function CreateHitTiles() {
     
-    var tileArray = [];
+    var tileArray = {};
     var graphics = game.add.graphics(0,0);
     
     graphics.beginFill(0xFF3300);
     graphics.lineStyle(1, 0xffd900, 1);
     graphics.drawRoundedRect(0, 0, tileSize, tileSize, 2);
-    
-    console.log(tileArray);
-    
+     
     for(var tile_col = 0; tile_col < tileCountX; tile_col++)
     {
         for(var tile_row = 0; tile_row < tileCountY; tile_row++)
         {
             currentTile = this.game.add.sprite(tileSize, tileSize, graphics.generateTexture());
             currentTile.anchor.set(0.5);
-            currentTile.name = "tile_" + tile_col + "_" + tile_row;
+            currentTile.title = "tile_" + tile_col + "_" + tile_row;
             currentTile.x = tileStartX + (tileSize * tile_col) + (tileGap * tile_col);
             currentTile.y = tileStartY + (tileSize * tile_row) + (tileGap * tile_row);
             currentTile.alpha = 0.1;
@@ -39,18 +37,63 @@ function CreateHitTiles() {
             currentTile.inputEnabled = true;
             currentTile.events.onInputDown.add(listener, this);
             
-            tileArray[currentTile.name] = currentTile;
+            //tileArray[currentTile.name] = currentTile;
+            //tileArray[tile_col][tile_row] = currentTile;
+            if (typeof tileArray[tile_col] == 'undefined') 
+                tileArray[tile_col] = [];
+                
+            tileArray[tile_col][tile_row] = currentTile;
+            
         }
     }
     
+        
+    $(function () {   
+        $.getJSON( "js/tiles.json", function( data ) {
+            for(var key in data) {
+                if (!data.hasOwnProperty(key)) continue;
+                
+                var obj = data[key];
+                for (var prop in obj) {
+                    // skip loop if the property is from prototype
+                    if(!obj.hasOwnProperty(prop)) continue;
+                    
+                    var locationCount = obj[prop].locations.length;
+                    for( var i = 0; i < locationCount; i++) {
+                        
+                        var coords = obj[prop].locations[i].split(",");
+                        var x = coords[0];
+                        var y = coords[1];
+
+                        if (typeof tileManager[x][y] != 'undefined')
+                            tileManager[x][y].tileName = obj[prop].name;
+                        else
+                            console.log(x + ":" + y + " not found!");
+                         
+                        console.log();  
+                        if (typeof obj[prop].properties != 'undefined') {
+                            tileManager[x][y].tileResourceCostCount = obj[prop].properties.resourceCostCount;
+                            tileManager[x][y].tileResourceCostType = obj[prop].properties.resourceCostType;
+                        }
+                    }
+                }
+            }
+        });
+    });
+    
     graphics.destroy();
+    
+    return tileArray;
 }
 
-function listener () {
-
+function listener (obj) {
     counter++;
-    game.text.text = "You clicked " + counter + " times!";
-
+    game.helpTitle.text = "You clicked a " + obj.tileName + " tile!";
+    
+    if (typeof obj.tileResourceCostCount != 'undefined')
+        game.helpInfo.text = "The cost is " + obj.tileResourceCostCount + " " + obj.tileResourceCostType;
+    else
+        game.helpInfo.text = "It does not cost anything";
 }
 
 function xCoordsToPixel(x) {
