@@ -12,6 +12,7 @@
 </head>
 <body>
 
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 
 var game = new Phaser.Game(1000, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -20,8 +21,8 @@ function preload() {
     game.load.script('filterX', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurX.js');
     game.load.script('filterY', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurY.js');
     
-    game.load.image('board', 'assets/medium_board.png');
-    game.load.image('clone', 'assets/clone.png');
+    game.load.image('board', 'medium_board.png');
+    game.load.image('clone', 'clone.png');
 }
 
 var clone;
@@ -121,6 +122,10 @@ function update() {
     }
     
 }
+
+// open a socket to the backend
+var socket = io();
+
 
 </script>
 
