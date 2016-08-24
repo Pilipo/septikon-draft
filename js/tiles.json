@@ -173,8 +173,6 @@
 			"type": "production",
 			"name": "lichen",
 			"properties": {
-				"resourceCostType": null,
-				"resourceCostCount": 0,
 				"resourceYieldType": "biomass",
 				"resourceYieldCount": 1
 			},
@@ -185,8 +183,6 @@
 			"type": "production",
 			"name": "lichenTwo",
 			"properties": {
-				"resourceCostType": null,
-				"resourceCostCount": 0,
 				"resourceYieldType": "biomass",
 				"resourceYieldCount": 2
 			},
