@@ -4,6 +4,10 @@
 	<meta charset="UTF-8" />
 	<title>Septikon</title>
     <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    
+    <script src="js/wall_grid.js"></script>
+    <script src="js/septikon.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -11,33 +15,46 @@
     </style>
 </head>
 <body>
+    
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 
 var game = new Phaser.Game(1000, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
-function preload() {
-    game.load.script('filterX', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurX.js');
-    game.load.script('filterY', 'https://cdn.rawgit.com/photonstorm/phaser/master/filters/BlurY.js');
-    
-    game.load.image('board', 'medium_board.png');
-    game.load.image('clone', 'clone.png');
+function preload() { 
+    game.load.image('board', 'assets/medium_board.png');
+    game.load.image('clone', 'assets/clone.png');
 }
 
 var clone;
 var wasd;
 var cursors;
+var tileManager;
 
 function create() {
     game.physics.startSystem(Phaser.Physics.Arcade);
     
     game.add.sprite(0, 0, 'board');
-    clone = game.add.sprite(81, 37, 'clone');
+    
+    //TESTING
+    game.helpTitle = game.add.text(50, 5, '', { fill: '#ffffff' });
+    game.helpInfo = game.add.text(50, 670, '', { fill: '#dddddd' });
+
+    tileManager = CreateHitTiles();
+    
+    
+
+    
+    //END TESTING
+    
+    clone = game.add.sprite(xCoordsToPixel(0), yCoordsToPixel(0), 'clone');
+    clone.xCoord = 0;
+    clone.yCoord = 0;
+    clone.anchor.set(0.5);
     game.physics.arcade.enable(clone);
     clone.scale.setTo(0.25);
-    clone.angle = 90;
-    
+    clone.angle = 90;   
 
     this.cursors = game.input.keyboard.createCursorKeys();
 
@@ -48,7 +65,6 @@ function create() {
         right: game.input.keyboard.addKey(Phaser.Keyboard.D),
     };
     
-    console.log(clone);
 }
 
 var movementRate = 150;
@@ -66,28 +82,40 @@ function update() {
     
     if (this.wasd.left.isDown && !this.isMovingX)
     {
-        this.isMovingX = true;
-        this.previousX = clone.body.x;
-        this.targetX = this.previousX-29;
+        if(checkWall("West", clone.xCoord, clone.yCoord)) {
+            this.isMovingX = true;
+            this.previousX = clone.body.x;
+            this.targetX = this.previousX-29;
+            clone.xCoord--;
+        }
     }
     else if (this.wasd.right.isDown && !this.isMovingX)
     {
-        this.isMovingX = true;
-        this.previousX = clone.body.x;
-        this.targetX = this.previousX+29;
+        if(checkWall("East", clone.xCoord, clone.yCoord)) {
+            this.isMovingX = true;
+            this.previousX = clone.body.x;
+            this.targetX = this.previousX+29;
+            clone.xCoord++;
+        }
     }
     
     if (this.wasd.up.isDown && !this.isMovingY)
     {
-        this.isMovingY = true;
-        this.previousY = clone.body.y;
-        this.targetY = this.previousY-29;
+        if(checkWall("North", clone.xCoord, clone.yCoord)) {
+            this.isMovingY = true;
+            this.previousY = clone.body.y;
+            this.targetY = this.previousY-29;
+            clone.yCoord--;
+        }
     }
     else if (this.wasd.down.isDown && !this.isMovingY)
     {
-        this.isMovingY = true;
-        this.previousY = clone.body.y;
-        this.targetY = this.previousY+29;
+        if(checkWall("South", clone.xCoord, clone.yCoord)) {
+            this.isMovingY = true;
+            this.previousY = clone.body.y;
+            this.targetY = this.previousY+29;
+            clone.yCoord++;
+        }
     }
     
     if(this.isMovingX) {
