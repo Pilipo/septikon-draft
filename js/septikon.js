@@ -37,8 +37,6 @@ function CreateHitTiles() {
             currentTile.inputEnabled = true;
             currentTile.events.onInputDown.add(listener, this);
             
-            //tileArray[currentTile.name] = currentTile;
-            //tileArray[tile_col][tile_row] = currentTile;
             if (typeof tileArray[tile_col] == 'undefined') 
                 tileArray[tile_col] = [];
                 
@@ -46,9 +44,13 @@ function CreateHitTiles() {
             
         }
     }
-    
+    console.log(tileArray);
         
-    $(function () {   
+    $(function () {
+		$.ajaxSetup({
+			cache:false
+		});
+		
         $.getJSON( "js/tiles.json", function( data ) {
             for(var key in data) {
                 if (!data.hasOwnProperty(key)) continue;
@@ -64,13 +66,15 @@ function CreateHitTiles() {
                         var coords = obj[prop].locations[i].split(",");
                         var x = coords[0];
                         var y = coords[1];
+						
+						tileManager[x][y].xCoord = x;
+						tileManager[x][y].yCoord = y;
 
                         if (typeof tileManager[x][y] != 'undefined')
                             tileManager[x][y].tileName = obj[prop].name;
                         else
                             console.log(x + ":" + y + " not found!");
                          
-                        console.log();  
                         if (typeof obj[prop].properties != 'undefined') {
                             tileManager[x][y].tileResourceCostCount = obj[prop].properties.resourceCostCount;
                             tileManager[x][y].tileResourceCostType = obj[prop].properties.resourceCostType;
@@ -88,7 +92,7 @@ function CreateHitTiles() {
 
 function listener (obj) {
     counter++;
-    game.helpTitle.text = "You clicked a " + obj.tileName + " tile!";
+    game.helpTitle.text = "You clicked the " + obj.tileName + " tile at " + obj.xCoord + "," + obj.yCoord + "!";
     
     if (typeof obj.tileResourceCostCount != 'undefined')
         game.helpInfo.text = "The cost is " + obj.tileResourceCostCount + " " + obj.tileResourceCostType;

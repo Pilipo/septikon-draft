@@ -16,7 +16,7 @@
 				"callback": "fireThermite",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,20", "7,1", "7,7"]
+			"locations": ["6,20", "7,1", "7,7", "23,13", "23,19", "24,0"]
 		},
 		"battleShield": {
 			"id": "002",
@@ -28,7 +28,7 @@
 				"callback": "fireShield",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,0", "6,6", "6,13", "6,19", "7,2", "7,12"]
+			"locations": ["6,0", "6,6", "6,13", "6,19", "7,2", "7,12", "23,8", "23,18", "24,1", "24,7", "24,14"]
 		},
 		"battleBiodrone": {
 			"id": "003",
@@ -40,7 +40,7 @@
 				"callback": "fireBiodrone",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,5", "7,3", "7,15"]
+			"locations": ["6,5", "7,3", "7,15", "23,5", "23,17", "24,15"]
 		},
 		"battleSatellite": {
 			"id": "004",
@@ -52,7 +52,7 @@
 				"callback": "fireSatellite",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,14", "7,4", "7,17"]
+			"locations": ["6,14", "7,4", "7,17", "23,3", "23,16", "24,6", "24,20"]
 		},
 		"battleLaser": {
 			"id": "005",
@@ -64,7 +64,7 @@
 				"callback": "fireLaser",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,3", "6,7", "6,8", "6,12", "6,16", "7,5", "7,6", "7,9", "7,18", "7,19"]
+			"locations": ["6,3", "6,7", "6,8", "6,12", "6,16", "7,5", "7,6", "7,9", "7,18", "7,19", "23,1", "23,2", "23,11", "23,14", "23,15", "24,4", "24,8", "24,12", "24,13", "24,17"]
 		},
 		"battleRepair": {
 			"id": "006",
@@ -76,7 +76,7 @@
 				"callback": "repairTile",
 				"tileTargetID": null
 			},
-			"locations": ["6,1", "6,10", "6,18", "7,8", "7,13"]
+			"locations": ["6,1", "6,10", "6,18", "7,8", "7,13", "23,7", "23,12", "24,2", "24,10", "24,19"]
 		},
 		"battleRocket": {
 			"id": "007",
@@ -88,7 +88,7 @@
 				"callback": "fireRocket",
 				"gunnerTargetID": null
 			},
-			"locations": ["6,4", "6,11", "7,10", "7,16"]
+			"locations": ["6,4", "6,11", "7,10", "7,16", "23,4", "23,10", "24,9", "24,16"]
 		},
 		"battleEspionage": {
 			"id": "008",
@@ -100,7 +100,7 @@
 				"callback": "commitEspionage",
 				"cloneTargetID": null
 			},
-			"locations": ["6,15", "7,11"]
+			"locations": ["6,15", "7,11", "23,9", "24,5"]
 		},
 		"battleTakeover": {
 			"id": "009",
@@ -112,7 +112,7 @@
 				"callback": "takeoverSatellite",
 				"satelliteTargetID": null
 			},
-			"locations": ["6,17", "7,14"]
+			"locations": ["6,17", "7,14", "23,6", "24,3"]
 		},
 		"battleRepairTwo": {
 			"id": "010",
@@ -124,7 +124,7 @@
 				"callback": "repairTwo",
 				"tileTargetIDs": null
 			},
-			"locations": ["6,9"]
+			"locations": ["6,9", "24,11"]
 		},
 		"battleCounterEspionage": {
 			"id": "011",
@@ -136,37 +136,37 @@
 				"callback": "counterEspionage",
 				"cloneTargetIDs": null
 			},
-			"locations": ["6,2"]
+			"locations": ["6,2", "24,18"]
 		},
 		"otherSurface": {
 			"id": "012",
 			"type": "surface",
 			"name": "surface",
-			"locations": ["8,0", "8,1", "8,2", "8,3", "8,4", "8,5", "8,6", "8,7", "8,8", "8,9", "8,10", "8,11", "8,12", "8,13", "8,14", "8,15", "8,16", "8,17", "8,18", "8,19", "8,20"]
+			"locations": ["8,0", "8,1", "8,2", "8,3", "8,4", "8,5", "8,6", "8,7", "8,8", "8,9", "8,10", "8,11", "8,12", "8,13", "8,14", "8,15", "8,16", "8,17", "8,18", "8,19", "8,20", "22,0", "22,1", "22,2", "22,3", "22,4", "22,5", "22,6", "22,7", "22,8", "22,9", "22,10", "22,11", "22,12", "22,13", "22,14", "22,15", "22,16", "22,17", "22,18", "22,19", "22,20"]
 		},
 		"otherLock": {
 			"id": "013",
 			"type": "lock",
 			"name": "lock",
-			"locations": ["7,0", "5,10", "1,10", "7,20"]
+			"locations": ["7,0", "5,10", "1,10", "7,20", "23,0", "23,20", "25,10", "29,10"]
 		},
 		"armoryDrill": {
 			"id": "014",
 			"type": "armory",
 			"name": "drill",
-			"locations": ["4,10"]
+			"locations": ["4,10", "26,10"]
 		},
 		"ArmoryCannon": {
 			"id": "015",
 			"type": "armory",
 			"name": "cannon",
-			"locations": ["3,10"]
+			"locations": ["3,10", "27,10"]
 		},
 		"armoryExplosives": {
 			"id": "016",
 			"type": "armory",
 			"name": "explosives",
-			"locations": ["2,10"]
+			"locations": ["2,10", "28,10"]
 		},
 		"lichen": {
 			"id": "017",
@@ -176,7 +176,7 @@
 				"resourceYieldType": "biomass",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,0", "0,10", "0,17", "1,2", "1,8", "1,16", "1,20"]
+			"locations": ["0,0", "0,10", "0,17", "1,2", "1,8", "1,16", "1,20", "29,0", "29,4", "29,12", "29,18", "30,3", "30,10", "30,20"]
 		},
 		"productionLichenTwo": {
 			"id": "018",
@@ -186,7 +186,7 @@
 				"resourceYieldType": "biomass",
 				"resourceYieldCount": 2
 			},
-			"locations": ["0,4"]
+			"locations": ["0,4", "30,16"]
 
 		},
 		"productionChemicalReactor": {
@@ -199,7 +199,7 @@
 				"resourceYieldType": "oxygen",
 				"resourceYieldCount": 1
 			},
-			"locations": ["1,1", "1,9"]
+			"locations": ["1,1", "1,9", "29,19", "29,11"]
 
 		},
 		"productionChemicalReactorTwo": {
@@ -212,7 +212,7 @@
 				"resourceYieldType": "oxygen",
 				"resourceYieldCount": 2
 			},
-			"locations": ["0,5"]
+			"locations": ["0,5", "30,15"]
 		},
 		"productionAirFilter": {
 			"id": "021",
@@ -224,7 +224,7 @@
 				"resourceYieldType": "oxygen",
 				"resourceYieldCount": 3
 			},
-			"locations": ["0,15", "1,11"]
+			"locations": ["0,15", "1,11", "29,9", "30,5"]
 		},
 		"productionBiocollector": {
 			"id": "022",
@@ -236,7 +236,7 @@
 				"resourceYieldType": "biodrone",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,14", "0,18", "1,6", "1,17"]
+			"locations": ["0,14", "0,18", "1,6", "1,17", "30,6", "30,2", "29,14", "29,3"]
 		},
 		"productionUraniumMine": {
 			"id": "023",
@@ -248,7 +248,7 @@
 				"resourceYieldType": "uranium",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,2", "0,6", "1,3"]
+			"locations": ["0,2", "0,6", "1,3", "30,18", "30,14", "29,17"]
 		},
 		"productionNuclearReactor": {
 			"id": "024",
@@ -260,7 +260,7 @@
 				"resourceYieldType": "energy",
 				"resourceYieldCount": 3
 			},
-			"locations": ["0,9", "0,16", "1,7", "1,14", "1,19"]
+			"locations": ["0,9", "0,16", "1,7", "1,14", "1,19", "30,11", "30,4", "29,13", "29,6", "29,1"]
 		},
 		"productionThermalGenerator": {
 			"id": "025",
@@ -272,7 +272,7 @@
 				"resourceYieldType": "energy",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,12"]
+			"locations": ["0,12", "30,8"]
 		},
 		"productionFoundry": {
 			"id": "026",
@@ -284,7 +284,7 @@
 				"resourceYieldType": "metal",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,3", "0,11", "0,19", "1,13"]
+			"locations": ["0,3", "0,11", "0,19", "1,13", "30,17", "30,9", "30,1", "29,7"]
 		},
 		"productionFoundryTwo": {
 			"id": "027",
@@ -296,7 +296,7 @@
 				"resourceYieldType": "metal",
 				"resourceYieldCount": 2
 			},
-			"locations": ["1,0"]
+			"locations": ["1,0", "29,20"]
 		},
 		"productionRocketWorkshop": {
 			"id": "028",
@@ -308,7 +308,7 @@
 				"resourceYieldType": "rocket",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,1", "0,7", "1,5", "1,12", "1,15"]
+			"locations": ["0,1", "0,7", "1,5", "1,12", "1,15", "30,19", "30,13", "29,15", "29,8", "29,5"]
 		},
 		"productionSensorCabin": {
 			"id": "029",
@@ -318,7 +318,7 @@
 				"callback": "consumeEnemyBiodrone",
 				"biodroneTargetID": null
 			},
-			"locations": ["0,13"]
+			"locations": ["0,13", "30,7"]
 		},
 		"productionNuclearArmory": {
 			"id": "030",
@@ -330,7 +330,7 @@
 				"resourceYieldType": "nuke",
 				"resourceYieldCount": 1
 			},
-			"locations": ["0,20", "1,4", "1,18"]
+			"locations": ["0,20", "1,4", "1,18", "30,0", "29,16", "29,2"]
 		},
 		"productionRepair": {
 			"id": "031",
@@ -342,49 +342,49 @@
 				"callback": "repairTile",
 				"tileTargetID": null
 			},
-			"locations": ["0,8"]
+			"locations": ["0,8", "30,12"]
 		},
 		"resourceOxygen": {
 			"id": "032",
 			"type": "warehouse",
 			"name": "oxygen",
-			"locations": ["5,0", "5,1", "5,2", "5,3", "5,4", "5,5", "5,6", "5,7", "5,8", "5,9"]
+			"locations": ["5,0", "5,1", "5,2", "5,3", "5,4", "5,5", "5,6", "5,7", "5,8", "5,9", "25,11", "25,12", "25,13", "25,14", "25,15", "25,16", "25,17", "25,18", "25,19", "25,20"]
 		},
 		"resourceRocket": {
 			"id": "033",
 			"type": "warehouse",
 			"name": "rocket",
-			"locations": ["4,0", "4,1", "4,2", "4,3", "4,4", "4,5", "4,6", "4,7", "4,8", "4,9"]
+			"locations": ["4,0", "4,1", "4,2", "4,3", "4,4", "4,5", "4,6", "4,7", "4,8", "4,9", "26,11", "26,12", "26,13", "26,14", "26,15", "26,16", "26,17", "26,18", "26,19", "26,20"]
 		},
 		"resourceMetal": {
 			"id": "034",
 			"type": "warehouse",
 			"name": "metal",
-			"locations": ["3,0", "3,1", "3,2", "3,3", "3,4", "3,5", "3,6", "3,7", "3,8", "3,9"]
+			"locations": ["3,0", "3,1", "3,2", "3,3", "3,4", "3,5", "3,6", "3,7", "3,8", "3,9", "27,11", "27,12", "27,13", "27,14", "27,15", "27,16", "27,17", "27,18", "27,19", "27,20"]
 		},
 		"resourceEnergy": {
 			"id": "035",
 			"type": "warehouse",
 			"name": "energy",
-			"locations": ["2,0", "2,1", "2,2", "2,3", "2,4", "2,5", "2,6", "2,7", "2,8", "2,9", "2,11", "2,12", "2,13", "2,14", "2,15", "2,16", "2,17", "2,18", "2,19", "2,20"]
+			"locations": ["2,0", "2,1", "2,2", "2,3", "2,4", "2,5", "2,6", "2,7", "2,8", "2,9", "2,11", "2,12", "2,13", "2,14", "2,15", "2,16", "2,17", "2,18", "2,19", "2,20", "28,0", "28,1", "28,2", "28,3", "28,4", "28,5", "28,6", "28,7", "28,8", "28,9", "28,11", "28,12", "28,13", "28,14", "28,15", "28,16", "28,17", "28,18", "28,19", "28,20"]
 		},
 		"resourceBiomass": {
 			"id": "036",
 			"type": "warehouse",
 			"name": "biomass",
-			"locations": ["5,11", "5,12", "5,13", "5,14", "5,15", "5,16", "5,17", "5,18", "5,19", "5,20"]
+			"locations": ["5,11", "5,12", "5,13", "5,14", "5,15", "5,16", "5,17", "5,18", "5,19", "5,20", "25,0", "25,1", "25,2", "25,3", "25,4", "25,5", "25,6", "25,7", "25,8", "25,9"]
 		},
 		"resourceBiodrone": {
 			"id": "037",
 			"type": "warehouse",
 			"name": "biodrone",
-			"locations": ["4,11", "4,12", "4,13", "4,14", "4,15", "4,16", "4,17", "4,18", "4,19", "4,20"]
+			"locations": ["4,11", "4,12", "4,13", "4,14", "4,15", "4,16", "4,17", "4,18", "4,19", "4,20", "26,0", "26,1", "26,2", "26,3", "26,4", "26,5", "26,6", "26,7", "26,8", "26,9"]
 		},
 		"resourceUranium": {
 			"id": "038",
 			"type": "warehouse",
 			"name": "uranium",
-			"locations": ["3,11", "3,12", "3,13", "3,14", "3,15", "3,16", "3,17", "3,18", "3,19", "3,20"]
+			"locations": ["3,11", "3,12", "3,13", "3,14", "3,15", "3,16", "3,17", "3,18", "3,19", "3,20", "27,0", "27,1", "27,2", "27,3", "27,4", "27,5", "27,6", "27,7", "27,8", "27,9"]
 		}
 	}
 }
