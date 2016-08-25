@@ -42,13 +42,13 @@ function create() {
 	graphics.drawRect(0, 0, 1000, 100);
 	devPanel = this.game.add.sprite(0, 700, graphics.generateTexture());
 	devPanel.inputEnabled = true;
-    devPanel.events.onInputDown.add(rollDice);
+    devPanel.events.onInputDown.add(Septikon.rollDice);
 	graphics.destroy();
     
   
     game.helpTitle = game.add.text(50, 5, '', { fill: '#ffffff' });
     game.helpInfo = game.add.text(50, 670, '', { fill: '#dddddd' });
-	game.dice = game.add.text(50, 750, 'Click to Roll', { fill: '#dddddd' });
+	game.dice = game.add.text(50, 750, 'Click to Roll (it will show in console logs)', { fill: '#dddddd' });
 
     tileManager = Septikon.createTiles(game);
         
@@ -156,14 +156,6 @@ function update() {
     }
     
 }
-
-function rollDice(){
-	roll = Math.floor(Math.random() * 6) + 1;
-	console.log(roll);
-	game.dice.text = "You rolled a " + (roll);
-	return ;  
-}
-
 </script>
 
 </body>
