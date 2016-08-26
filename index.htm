@@ -19,23 +19,27 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(1000, 800, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 800, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
 
 function preload() { 
-    game.load.image('board', 'assets/medium_board.png');
-    game.load.image('clone', 'assets/clone.png');
+
+	Septikon.preload(game);
+    
 }
 
-var clone;
 var wasd;
+var camControl;
 var cursors;
-var tileManager;
+var directions;
 
 function create() {
+
     game.physics.startSystem(Phaser.Physics.Arcade);
-    
-    game.add.sprite(0, 0, 'board');
 	
+	Septikon.create(game);
+	
+	clone = Septikon.clone;
+		
 	  //TESTING
 	var graphics = game.add.graphics(100, 100);
 	graphics.beginFill(0xFF3300);
@@ -54,15 +58,9 @@ function create() {
         
     //END TESTING
     
-    clone = game.add.sprite(Septikon.xCoordsToPixel(0), Septikon.yCoordsToPixel(0), 'clone');
-    clone.xCoord = 0;
-    clone.yCoord = 0;
-    clone.anchor.set(0.5);
-    game.physics.arcade.enable(clone);
-    clone.scale.setTo(0.25);
-    clone.angle = 90;   
+       
 
-    this.cursors = game.input.keyboard.createCursorKeys();
+    cursors = game.input.keyboard.createCursorKeys();
 
     this.wasd = {
         up: game.input.keyboard.addKey(Phaser.Keyboard.W),
@@ -70,59 +68,153 @@ function create() {
         left: game.input.keyboard.addKey(Phaser.Keyboard.A),
         right: game.input.keyboard.addKey(Phaser.Keyboard.D),
     };
+	
+	this.camControl = {
+		zoomTeam1: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_1),
+		zoomTeam2: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_3),
+		zoomFullBoard: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_5),
+		zoomLogo: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_8),
+		zoomTeam1Gunners: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_4),
+		zoomTeam2Gunners: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_6)
+	}
     
 }
 
 var movementRate = 150;
-var previousX;
-var isMovingX = false;
-var targetX;
-var previousY;
-var isMovingY = false;
-var targetY;
+var target;
+var isMoving = false;
 
 function update() {
-    
-    clone.body.velocity.x = 0;
-    clone.body.velocity.y = 0;
-    
+    var direction;
+	
     if (this.wasd.left.isDown && !this.isMovingX)
     {
-        if(Septikon.checkWall("West", clone.xCoord, clone.yCoord)) {
-            this.isMovingX = true;
-            this.previousX = clone.body.x;
-            this.targetX = this.previousX-29;
-            clone.xCoord--;
+		if(Septikon.group.angle == -90){
+			Septikon.clone.y -=3;
+		}
+		else if (Septikon.group.angle == 90){
+			Septikon.clone.y +=3;
+		}
+		else {
+			Septikon.clone.x -=3;
+		}
+		
+        if(Septikon.checkWall(direction, clone.xCoord, clone.yCoord)) {
+            this.isMoving = true;
+            this.previous = Septikon.clone.body.x;
+            //this.targetX = this.previousX-29;
+            //Septikon.clone.xCoord--;
         }
     }
     else if (this.wasd.right.isDown && !this.isMovingX)
     {
-        if(Septikon.checkWall("East", clone.xCoord, clone.yCoord)) {
-            this.isMovingX = true;
-            this.previousX = clone.body.x;
-            this.targetX = this.previousX+29;
-            clone.xCoord++;
-        }
+ 		if(Septikon.group.angle == -90){
+			Septikon.clone.y +=3;
+			direction = "North";}
+		else if (Septikon.group.angle == 90){
+			Septikon.clone.y -=3;
+			direction = "South";}
+		else{
+			Septikon.clone.x +=3;
+			direction = "East";}
+       //if(Septikon.checkWall("East", clone.xCoord, clone.yCoord)) {
+            //this.isMovingX = true;
+            //this.previousX = clone.body.x;
+            //this.targetX = this.previousX+29;
+            //clone.xCoord++;
+        //}
     }
-    
-    if (this.wasd.up.isDown && !this.isMovingY)
+	else if (this.wasd.up.isDown && !this.isMovingY)
     {
-        if(Septikon.checkWall("North", clone.xCoord, clone.yCoord)) {
-            this.isMovingY = true;
-            this.previousY = clone.body.y;
-            this.targetY = this.previousY-29;
-            clone.yCoord--;
-        }
+ 		if(Septikon.group.angle == -90){
+			Septikon.clone.x +=3;
+			direction = "East";}
+		else if (Septikon.group.angle == 90){
+			Septikon.clone.x -=3;
+			direction = "West";}
+		else{
+			Septikon.clone.y -=3;
+			direction = "North";}
+        //if(Septikon.checkWall("North", clone.xCoord, clone.yCoord)) {
+            //this.isMovingY = true;
+            //this.previousY = clone.body.y;
+            //this.targetY = this.previousY-29;
+            //clone.yCoord--;
+        //}
     }
     else if (this.wasd.down.isDown && !this.isMovingY)
     {
-        if(Septikon.checkWall("South", clone.xCoord, clone.yCoord)) {
-            this.isMovingY = true;
-            this.previousY = clone.body.y;
-            this.targetY = this.previousY+29;
-            clone.yCoord++;
-        }
+ 		if(Septikon.group.angle == -90){
+			Septikon.clone.x -=3;
+			direction = "West";}
+		else if (Septikon.group.angle == 90){
+			Septikon.clone.x +=3;
+			direction = "East";}
+		else{
+			Septikon.clone.y +=3;
+ 			direction = "South";}
+       //if(Septikon.checkWall("South", clone.xCoord, clone.yCoord)) {
+            //this.isMovingY = true;
+            //this.previousY = clone.body.y;
+           // this.targetY = this.previousY+29;
+           // clone.yCoord++;
+        //}
     }
+	
+	if(this.camControl.zoomTeam1.isDown)
+	{
+		tweenTurn1 = game.add.tween(Septikon.group);
+		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.5,y: 1.5}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: 500, y:-50, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.start();
+		tweenZoom1.start();
+	}
+	
+	if(this.camControl.zoomTeam2.isDown)
+	{
+		tweenTurn2 = game.add.tween(Septikon.group);
+		tweenZoom2 = game.add.tween(Septikon.group.scale).to({x: 1.5,y: 1.5}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn2.to({x: 500, y:-50, angle:90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn2.start();
+		tweenZoom2.start();
+	}
+	
+	if(this.camControl.zoomTeam1Gunners.isDown)
+	{
+		tweenTurn1 = game.add.tween(Septikon.group);
+		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.1,y: 1.1}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: 480, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.start();
+		tweenZoom1.start();
+	}
+	
+	if(this.camControl.zoomTeam2Gunners.isDown)
+	{
+		tweenTurn1 = game.add.tween(Septikon.group);
+		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.1,y: 1.1}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: 520, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.start();
+		tweenZoom1.start();
+	}
+	
+	if(this.camControl.zoomFullBoard.isDown)
+	{
+		tweenTurn3 = game.add.tween(Septikon.group);
+		tweenZoom3 = game.add.tween(Septikon.group.scale).to({x: 1,y: 1}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.to({x: 500, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.start();
+		tweenZoom3.start();
+	}
+
+	if(this.camControl.zoomLogo.isDown)
+	{
+		tweenTurn3 = game.add.tween(Septikon.group);
+		tweenZoom3 = game.add.tween(Septikon.group.scale).to({x: 1.75,y: 1.75}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.to({x: 500, y:350, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.start();
+		tweenZoom3.start();
+	}
+
     
     if(this.isMovingX) {
         //LEFT of target?
@@ -154,7 +246,60 @@ function update() {
             clone.body.velocity.y = 200;
         }
     }
-    
+	
+    if (cursors.up.isDown)
+    {
+		if (cursors.up.shiftKey)
+		{
+			Septikon.group.scale.set(2);
+		}
+		else
+		{
+			Septikon.group.y += 4;
+		}
+    }
+    else if (cursors.down.isDown)
+    {
+		if (cursors.down.shiftKey)
+		{
+			Septikon.group.scale.set(1);
+		}
+		else
+		{
+			Septikon.group.y -= 4;
+		}
+    }
+
+    if (cursors.left.isDown)
+    {
+        if (cursors.left.shiftKey)
+        {
+            Septikon.group.rotation -= 0.05;
+        }
+        else
+        {
+            Septikon.group.x += 4;
+        }
+    }
+    else if (cursors.right.isDown)
+    {
+        if (cursors.right.shiftKey)
+        {
+            Septikon.group.rotation += 0.05;
+        }
+        else
+        {
+            Septikon.group.x -= 4;
+        }
+    }
+	
+	//Septikon.worldScale = Phaser.Math.clamp(Septikon.worldScale, 0.25, 2);
+	//game.world.scale.set(Septikon.worldScale);
+}
+
+function render() {
+
+    //game.debug.cameraInfo(game.camera, 32, 32);
 }
 </script>
 

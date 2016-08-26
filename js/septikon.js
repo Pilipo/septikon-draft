@@ -1,5 +1,8 @@
 var Septikon = (function(){
 
+	var board;
+	var clone;
+
 	var tileSize = 25;
 	var tileCountX = 31;
 	var tileCountY = 21;
@@ -14,12 +17,40 @@ var Septikon = (function(){
 	
 	var tileArray = {};
 	
-	//TESTING
-	var counter = 0;
-	//END TESTING
+	var group;
+	//var worldScale = 1;
+	
 
 	return {
 	
+		preload: function(game) {
+			game.load.image('board', 'assets/medium_board.png');
+			game.load.image('clone', 'assets/clone.png');
+		},
+		
+		create: function(game) {
+		
+			this.group = game.add.group();
+		
+			this.board = game.add.sprite(0, 0, 'board');
+			this.clone = game.add.sprite(Septikon.xCoordsToPixel(0), Septikon.yCoordsToPixel(0), 'clone');
+			
+			this.clone.xCoord = 0;
+			this.clone.yCoord = 0;
+			this.clone.anchor.set(0.5);
+			game.physics.arcade.enable(this.clone);
+			this.clone.scale.setTo(0.25);
+			this.clone.angle = 90;
+			
+			this.group.add(this.board);
+			this.group.add(this.clone);
+			this.group.pivot = {x:500,y:350};
+			this.group.x = 500;
+			this.group.y = 350;
+			
+			
+		},
+		
 		createTiles: function(game){
 			
 			var graphics = game.add.graphics(0,0);
@@ -41,6 +72,8 @@ var Septikon = (function(){
 					
 					currentTile.inputEnabled = true;
 					currentTile.events.onInputDown.add(Septikon.listener, this);
+					
+					this.group.add(currentTile);
 					
 					if (typeof tileArray[tile_col] == 'undefined') 
 						tileArray[tile_col] = [];
@@ -93,9 +126,13 @@ var Septikon = (function(){
 			
 			return tileArray;
 		},
+		
+		clone: this.clone,
+		
+		group: this.group,
+		//worldScale: this.worldScale,
 	
 		listener: function (obj) {
-			counter++;
 			game.helpTitle.text = "You clicked the " + obj.tileName + " tile at " + obj.xCoord + "," + obj.yCoord + "!";
 			
 			if (typeof obj.tileResourceCostCount != 'undefined')
@@ -113,24 +150,38 @@ var Septikon = (function(){
 		},
 
 		checkWall: function (direction, x, y) {
+		
+			var dir;
+			switch (this.group.angle) {
+				case 90: 
+					dir={North:8,East:1,South:2,West:4};
+					break;
+				case -90:
+					dir={North:2,East:4,South:8,West:1};
+					break;
+				default:
+					dir={North:1,East:2,South:4,West:8};
+			}
+
+			
 			switch (direction){
 				case "North": //UP
-					if (parseInt(WALL_GRID[x][y]&1) == 0) {
+					if (parseInt(WALL_GRID[x][y]&North) == 0) {
 						return true;
 					}
 					break;
 				case "South": //DOWN
-					if (parseInt(WALL_GRID[x][y]&4) == 0) {
+					if (parseInt(WALL_GRID[x][y]&South) == 0) {
 						return true;
 					}
 					break;
 				case "East": // right arrow key
-					if (parseInt(WALL_GRID[x][y]&2) == 0) {
+					if (parseInt(WALL_GRID[x][y]&East) == 0) {
 						return true;
 					}
 					break;
 				case "West": // left arrow key
-					if (parseInt(WALL_GRID[x][y]&8) == 0) {
+					if (parseInt(WALL_GRID[x][y]&West) == 0) {
 						return true;
 					}
 					break;
@@ -142,6 +193,10 @@ var Septikon = (function(){
 		rollDice: function(){
 			roll = Math.floor(Math.random() * 6) + 1;
 			console.log(roll);
+			console.log( Septikon.group);
+			console.log("Group angle: " + Septikon.group.angle);
+			console.log("Group scale: " + Septikon.group.scale);
+			console.log("Group coordinates: " + Septikon.group.x + ":" + Septikon.group.y);
 			return roll;  
 		}
 	
