@@ -20,12 +20,41 @@ var Septikon = (function(){
 	var group;
 	//var worldScale = 1;
 	
+	
 
 	return {
 	
 		preload: function(game) {
 			game.load.image('board', 'assets/medium_board.png');
 			game.load.image('clone', 'assets/clone.png');
+		},
+		
+		getLegalMoves: function(moves, currentCoord, previousCoord) {
+			moves--;
+			var legalMoves = [];
+			
+			dir={North:1,East:2,South:4,West:8};
+		
+			for(direction in dir)
+			{	
+				//CHECK FOR LOCKS
+				
+				var moveCheck = this.getCoordFromDirection(currentCoord,direction);
+				
+				if(Septikon.checkWall(direction, currentCoord) === true &&  ((typeof previousCoord === 'undefined') || ((typeof previousCoord !== 'undefined') && (JSON.stringify(moveCheck) !== JSON.stringify(previousCoord))))) {
+					if(moves==0){
+						legalMoves.push(moveCheck);
+					}
+					else {
+						var returnArray = (Septikon.getLegalMoves(moves, moveCheck, currentCoord));
+						for(var i=0; i<returnArray.length; i++) {
+							if(JSON.stringify(returnArray[i]) !== JSON.stringify(currentCoord))
+								legalMoves.push(returnArray[i]);
+						}
+					}
+				}
+			}
+			return legalMoves;
 		},
 		
 		create: function(game) {
@@ -130,8 +159,7 @@ var Septikon = (function(){
 		clone: this.clone,
 		
 		group: this.group,
-		//worldScale: this.worldScale,
-	
+		
 		listener: function (obj) {
 			game.helpTitle.text = "You clicked the " + obj.tileName + " tile at " + obj.xCoord + "," + obj.yCoord + "!";
 			
@@ -149,39 +177,28 @@ var Septikon = (function(){
 			return tileStartY + (y * (tileSize+tileGap));
 		},
 
-		checkWall: function (direction, x, y) {
+		checkWall: function (direction, currentCoord) {
 		
-			var dir;
-			switch (this.group.angle) {
-				case 90: 
-					dir={North:8,East:1,South:2,West:4};
-					break;
-				case -90:
-					dir={North:2,East:4,South:8,West:1};
-					break;
-				default:
-					dir={North:1,East:2,South:4,West:8};
-			}
-
+			var dir={North:1,East:2,South:4,West:8};
 			
 			switch (direction){
 				case "North": //UP
-					if (parseInt(WALL_GRID[x][y]&North) == 0) {
+					if (parseInt(WALL_GRID[currentCoord.x][currentCoord.y]&dir.North) == 0) {
 						return true;
 					}
 					break;
 				case "South": //DOWN
-					if (parseInt(WALL_GRID[x][y]&South) == 0) {
+					if (parseInt(WALL_GRID[currentCoord.x][currentCoord.y]&dir.South) == 0) {
 						return true;
 					}
 					break;
 				case "East": // right arrow key
-					if (parseInt(WALL_GRID[x][y]&East) == 0) {
+					if (parseInt(WALL_GRID[currentCoord.x][currentCoord.y]&dir.East) == 0) {
 						return true;
 					}
 					break;
 				case "West": // left arrow key
-					if (parseInt(WALL_GRID[x][y]&West) == 0) {
+					if (parseInt(WALL_GRID[currentCoord.x][currentCoord.y]&dir.West) == 0) {
 						return true;
 					}
 					break;
@@ -192,12 +209,19 @@ var Septikon = (function(){
 		
 		rollDice: function(){
 			roll = Math.floor(Math.random() * 6) + 1;
-			console.log(roll);
-			console.log( Septikon.group);
-			console.log("Group angle: " + Septikon.group.angle);
-			console.log("Group scale: " + Septikon.group.scale);
-			console.log("Group coordinates: " + Septikon.group.x + ":" + Septikon.group.y);
+			console.log(Septikon.getLegalMoves(3,{x:1,y:10}));
 			return roll;  
+		}, 
+		
+		getCoordFromDirection: function(originCoord,direction) {
+		
+			var dir={North:{"y":-1},East:{"x":1},South:{"y":1},West:{"x":-1}};
+			
+			if (typeof(dir[direction].y) !== "undefined")
+				return {x:originCoord.x, y: originCoord.y + parseInt(dir[direction].y)};
+				
+			if (typeof(dir[direction].x) !== "undefined")
+				return {x:originCoord.x + parseInt(dir[direction].x), y: originCoord.y}
 		}
 	
 	};
