@@ -3,24 +3,9 @@ var Septikon = (function(){
 	var board;
 	var clone;
 
-	var tileSize = 25;
-	var tileCountX = 31;
-	var tileCountY = 21;
-	var tileGap = 4.89;
-	var tileStartX = 52;
-	var tileStartY = 51;
-
-	var North = 1;
-	var South = 4;
-	var East = 2;
-	var West = 8;
-	
-	var tileArray = {};
+	var directions = {N:1,E:2,S:4,W:8};
 	
 	var group;
-	//var worldScale = 1;
-	
-	
 
 	return {
 	
@@ -60,7 +45,13 @@ var Septikon = (function(){
 		create: function(game) {
 		
 			this.group = game.add.group();
-		
+			
+			this.player1 = new Septikon.Player("Player 1", "Red");
+			this.player2 = new Septikon.Player("Player 2", "Blue");
+			
+			console.log(this.player1);
+			console.log(this.player2);
+					
 			this.board = game.add.sprite(0, 0, 'board');
 			this.clone = game.add.sprite(Septikon.xCoordsToPixel(0), Septikon.yCoordsToPixel(0), 'clone');
 			
@@ -83,6 +74,16 @@ var Septikon = (function(){
 		createTiles: function(game){
 			
 			var graphics = game.add.graphics(0,0);
+			
+			var tileArray = [];
+			
+			var tileSize = 25;
+			var tileCountX = 31;
+			var tileCountY = 21;
+			var tileGap = 4.89;
+			var tileStartX = 52;
+			var tileStartY = 51;
+
 			
 			graphics.beginFill(0xFF3300);
 			graphics.lineStyle(1, 0xffd900, 1);
@@ -163,6 +164,8 @@ var Septikon = (function(){
 		listener: function (obj) {
 			game.helpTitle.text = "You clicked the " + obj.tileName + " tile at " + obj.xCoord + "," + obj.yCoord + "!";
 			
+			this.player1.ResourceManager.PutResource("energy",this.player1);
+			
 			if (typeof obj.tileResourceCostCount != 'undefined')
 				game.helpInfo.text = "The cost is " + obj.tileResourceCostCount + " " + obj.tileResourceCostType;
 			else
@@ -170,11 +173,11 @@ var Septikon = (function(){
 		},
 
 		xCoordsToPixel: function (x) {
-			return tileStartX + (x * (tileSize+tileGap));
+			return Septikon.tileStartX + (x * (Septikon.tileSize+Septikon.tileGap));
 		},
 
 		yCoordsToPixel: function (y) {
-			return tileStartY + (y * (tileSize+tileGap));
+			return Septikon.tileStartY + (y * (Septikon.tileSize+Septikon.tileGap));
 		},
 
 		checkWall: function (direction, currentCoord) {
@@ -227,3 +230,59 @@ var Septikon = (function(){
 	};
 
 })();
+
+Septikon.Game = function() {
+	
+}
+
+Septikon.Player = function(name, color) {
+	this.name = name;
+	this.color = color;
+	this.ResourceManager = {
+		GetResource: function(resourceType, player) {
+		},
+		PutResource: function(resourceType, player) {
+			var resource = new Septikon.Resource(resourceType);
+			player[resourceType].push(resource);
+		}
+	};
+	this.cloneCollection = [];
+	this.AddClone = function(tile) {		
+			clone = new Septikon.Clone(this);
+			clone.xCoord = tile.xCoord;
+			clone.yCoord = tile.yCoord;
+			this.cloneCollection.push(clone);
+		};
+		
+	this.oxygen = [];
+	this.rocket = [];
+	this.metal = [];
+	this.biomass = [];
+	this.biodrone = [];
+	this.uranium = [];
+	this.energy = [];
+	
+	this.rocketCollection = [];
+	this.satelliteCollection = [];
+	this.shieldCollection = [];
+	this.biodroneCollection = [];
+	this.nukeCollection = [];
+}
+
+Septikon.Resource = function(type) {
+	this.types = {oxygen:1, rocket:2, metal:3, biomass:4, biodrone:5, uranium:6, energy:7};
+	this.type = this.types[type];	
+}
+
+Septikon.Clone = function(player) {
+	this.player = player;
+	//get the player obj
+
+
+	this.xCoord = 0;
+	this.xCoord = 0;
+	
+	console.log("cloning");
+	//set color based on player obj
+	//this.color = player.color;
+}
