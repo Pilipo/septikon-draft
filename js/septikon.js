@@ -1,11 +1,8 @@
 var Septikon = (function(){
 
-	var board;
-	var clone;
 
-	var directions = {N:1,E:2,S:4,W:8};
-	
-	var group;
+	var directions = {N:1,E:2,S:4,W:8};	
+	var playerPositions;
 
 	return {
 	
@@ -46,29 +43,20 @@ var Septikon = (function(){
 		
 			this.group = game.add.group();
 			
-			this.player1 = new Septikon.Player("Player 1", "Red");
-			this.player2 = new Septikon.Player("Player 2", "Blue");
-			
-			console.log(this.player1);
-			console.log(this.player2);
-					
-			this.board = game.add.sprite(0, 0, 'board');
-			this.clone = game.add.sprite(Septikon.xCoordsToPixel(0), Septikon.yCoordsToPixel(0), 'clone');
-			
-			this.clone.xCoord = 0;
-			this.clone.yCoord = 0;
-			this.clone.anchor.set(0.5);
-			game.physics.arcade.enable(this.clone);
-			this.clone.scale.setTo(0.25);
-			this.clone.angle = 90;
-			
+			this.board = game.add.sprite(game.world.centerX, game.world.centerY, 'board');
+			this.board.anchor.set(0.5);
+
+			this.player1 = new Septikon.Player("Player 1", "Red", Septikon.playerPositions.local);
+			this.player2 = new Septikon.Player("Player 2", "Blue",  Septikon.playerPositions.remote);
+
 			this.group.add(this.board);
-			this.group.add(this.clone);
-			this.group.pivot = {x:500,y:350};
-			this.group.x = 500;
-			this.group.y = 350;
-			
-			
+			this.player1.initResources(game, this.player1);
+			//this.player2.initResources(game, this.player2);
+
+			this.group.pivot = {x:game.world.centerX,y:game.world.centerY};
+			this.group.x = game.world.centerX;
+			this.group.y = game.world.centerY;
+			this.createTiles(game);
 		},
 		
 		createTiles: function(game){
@@ -81,8 +69,8 @@ var Septikon = (function(){
 			var tileCountX = 31;
 			var tileCountY = 21;
 			var tileGap = 4.89;
-			var tileStartX = 52;
-			var tileStartY = 51;
+			var tileStartX = Septikon.board.x - Septikon.board.width/2 + 52;
+			var tileStartY = Septikon.board.y - Septikon.board.height/2 + 51;
 
 			
 			graphics.beginFill(0xFF3300);
@@ -98,10 +86,19 @@ var Septikon = (function(){
 					currentTile.title = "tile_" + tile_col + "_" + tile_row;
 					currentTile.x = tileStartX + (tileSize * tile_col) + (tileGap * tile_col);
 					currentTile.y = tileStartY + (tileSize * tile_row) + (tileGap * tile_row);
-					currentTile.alpha = 0.1;
+					currentTile.alpha = 0.2;
 					
 					currentTile.inputEnabled = true;
 					currentTile.events.onInputDown.add(Septikon.listener, this);
+					
+					if(tile_col<9){
+						currentTile.tileOwner = Septikon.playerPositions.local;
+					}
+					
+					if(tile_col>22){
+						currentTile.tileOwner = Septikon.playerPositions.remote;
+					}
+					
 					
 					this.group.add(currentTile);
 					
@@ -137,6 +134,8 @@ var Septikon = (function(){
 								tileArray[x][y].xCoord = x;
 								tileArray[x][y].yCoord = y;
 
+								tileArray[x][y].tileType = obj[prop].type;
+
 								if (typeof tileArray[x][y] != 'undefined')
 									tileArray[x][y].tileName = obj[prop].name;
 								else
@@ -158,18 +157,16 @@ var Septikon = (function(){
 		},
 		
 		clone: this.clone,
-		
+		board: this.board,
 		group: this.group,
+		tileSize: this.tileSize = 25,
+		tileCountX: this.tileCountX = 31,
+		tileCountY: this.tileCountY = 21,
+		tileGap: this.tileGap = 4.89,
+		playerPositions: this.playerPositions = {local:1, remote:2},
 		
 		listener: function (obj) {
-			game.helpTitle.text = "You clicked the " + obj.tileName + " tile at " + obj.xCoord + "," + obj.yCoord + "!";
-			
-			this.player1.ResourceManager.PutResource("energy",this.player1);
-			
-			if (typeof obj.tileResourceCostCount != 'undefined')
-				game.helpInfo.text = "The cost is " + obj.tileResourceCostCount + " " + obj.tileResourceCostType;
-			else
-				game.helpInfo.text = "It does not cost anything";
+			this.player1.AddClone(obj);
 		},
 
 		xCoordsToPixel: function (x) {
@@ -235,54 +232,155 @@ Septikon.Game = function() {
 	
 }
 
-Septikon.Player = function(name, color) {
+Septikon.Player = function(name, color, playerPosition) {
 	this.name = name;
 	this.color = color;
-	this.ResourceManager = {
-		GetResource: function(resourceType, player) {
-		},
-		PutResource: function(resourceType, player) {
-			var resource = new Septikon.Resource(resourceType);
-			player[resourceType].push(resource);
-		}
-	};
-	this.cloneCollection = [];
-	this.AddClone = function(tile) {		
-			clone = new Septikon.Clone(this);
-			clone.xCoord = tile.xCoord;
-			clone.yCoord = tile.yCoord;
-			this.cloneCollection.push(clone);
-		};
 		
-	this.oxygen = [];
-	this.rocket = [];
-	this.metal = [];
-	this.biomass = [];
-	this.biodrone = [];
-	this.uranium = [];
-	this.energy = [];
+	this.position = playerPosition;
+	
+	this.oxygen = [false,false,false,false,false,false,false,false,false,false];
+	this.rocket = [false,false,false,false,false,false,false,false,false,false];
+	this.metal = [false,false,false,false,false,false,false,false,false,false];
+	this.biomass = [false,false,false,false,false,false,false,false,false,false];
+	this.biodrone = [false,false,false,false,false,false,false,false,false,false];
+	this.uranium = [false,false,false,false,false,false,false,false,false,false];
+	this.energy1 = [false,false,false,false,false,false,false,false,false,false];
+	this.energy2 = [false,false,false,false,false,false,false,false,false,false];
 	
 	this.rocketCollection = [];
 	this.satelliteCollection = [];
 	this.shieldCollection = [];
 	this.biodroneCollection = [];
 	this.nukeCollection = [];
-}
-
-Septikon.Resource = function(type) {
-	this.types = {oxygen:1, rocket:2, metal:3, biomass:4, biodrone:5, uranium:6, energy:7};
-	this.type = this.types[type];	
-}
-
-Septikon.Clone = function(player) {
-	this.player = player;
-	//get the player obj
-
-
-	this.xCoord = 0;
-	this.xCoord = 0;
 	
-	console.log("cloning");
+	this.ResourceManager = {
+	
+		types: {
+			oxygen:{id:1, name:"oxygen", startCoord:{x:5,y:0}, endCoord:{x:5,y:9}, color:0x26A7E0}, 
+			rocket:{id:2, name:"rocket", startCoord:{x:4,y:0}, endCoord:{x:4,y:9}, color:0xDF3633}, 
+			metal:{id:3, name:"metal", startCoord:{x:3,y:0}, endCoord:{x:3,y:9}, color:0xFFEBE6}, 
+			biomass:{id:4, name:"biomass", startCoord:{x:5,y:20}, endCoord:{x:5,y:11}, color:0x95B43C}, 
+			biodrone:{id:5, name:"biodrone", startCoord:{x:4,y:20}, endCoord:{x:4,y:11}, color:0xA83984}, 
+			uranium:{id:6, name:"uranium", startCoord:{x:3,y:20}, endCoord:{x:3,y:11}, color:0xF45C1E}, 
+			energy1:{id:7, name:"energy1", startCoord:{x:2,y:0}, endCoord:{x:2,y:9}, color:0xFCCE00}, 
+			energy2:{id:8, name:"energy2", startCoord:{x:2,y:20}, endCoord:{x:2,y:11}, color:0xFCCE00}
+		},
+	
+		GetResource: function(resourceType, player) {
+		},
+		PutResource: function(resourceType, player) {
+			console.log(this.GetResourceCount(resourceType, player));
+			
+			var resource = new Septikon.Resource(game, position, {type:resourceType, player:player});
+			player[resourceType].push(resource);
+		},
+		GetResourceCount: function(resourceType, player) {
+		
+			if(typeof(player[resourceType]) === "undefined")
+				return false;
+			
+			var availableResources = 0;
+			for(var i=0; i<player[resourceType].length; i++) {
+				if(player[resourceType][i].isDamaged == false)
+					availableResources++;
+			}
+			return availableResources;
+		},
+		CountAvailableResources: function(resourceType, player) {
+			var resourceCount = 0;
+			var falseFound = false;
+			for(var test in player[resourceType]) {
+				if(player[resourceType][test] == false) {
+					falseFound = true;
+					continue;
+				} else {
+					if(falseFound == true)
+						resourceCount = 0;
+					
+					resourceCount++;
+				}
+			}
+			return resourceCount;
+		}
+	};
+	
+	this.cloneCollection = [];
+	
+	this.AddClone = function(tile) {
+	console.log(tile);
+		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileOwner != Septikon.playerPositions.local)
+			return false;
+		
+		if(this.ResourceManager.CountAvailableResources('oxygen',this) <= this.cloneCollection.length)
+			return false;
+		
+		clone = new Septikon.Clone(game, 'clone', {x:tile.xCoord, y:tile.yCoord}, {texture:""});
+		clone.xCoord = tile.xCoord;
+		clone.yCoord = tile.yCoord;
+		this.cloneCollection.push(clone);
+	};
+		
+	this.initResources = function(game, player) {
+		//fill up resources
+		for(var type in player.ResourceManager.types) {
+			if(player.ResourceManager.types[type].startCoord.y < player.ResourceManager.types[type].endCoord.y) {
+				for(var i=0; i < 5; i++) {
+					var position = {x:player.ResourceManager.types[type].startCoord.x, y:player.ResourceManager.types[type].startCoord.y+i};
+					var resource = new Septikon.Resource(game, position, {type:type, player:player});
+					player[type][i] = resource;
+				}
+			} else {
+				for(var i=0; i < 5; i++) {
+					var position = {x:player.ResourceManager.types[type].startCoord.x, y:player.ResourceManager.types[type].startCoord.y-i};
+					var resource = new Septikon.Resource(game, position, {type:type, player:player});
+					player[type][i] = resource;
+				}
+
+			}
+
+		}
+	}
+}
+
+Septikon.Resource = function(game, position, properties) {
+
+	var graphics = game.add.graphics(25, 25);
+	//console.log(properties.player.ResourceManager.types[properties.type].color);
+	graphics.lineColor = 0x000000;
+	graphics.lineWidth = 2;
+	graphics.beginFill(properties.player.ResourceManager.types[properties.type].color);
+	graphics.drawRoundedRect(0, 0, 20, 20, 8);
+
+	this.xCoord = position.x;
+	this.yCoord = position.y;
+	Phaser.Sprite.call(this, game, Septikon.xCoordsToPixel(this.xCoord), Septikon.yCoordsToPixel(this.yCoord), graphics.generateTexture());
+	this.anchor.set(0.5);
+	this.angle = 5;
+	this.type = properties.player.ResourceManager.types[properties.type];	
+	this.isDamaged = false;
+	
+	Septikon.group.add(this);
+	graphics.destroy();
+
+}
+Septikon.Resource.prototype = Object.create(Phaser.Sprite.prototype);
+Septikon.Resource.prototype.constructor = Septikon.Resource;
+
+Septikon.Clone = function(game, name, position, properties) {
+	//this.player = player;
+	//get the player obj
+	
+	this.xCoord = position.x;
+	this.yCoord = position.y;
+	Phaser.Sprite.call(this, game, Septikon.xCoordsToPixel(this.xCoord), Septikon.yCoordsToPixel(this.yCoord), 'clone');
+	this.anchor = {x:0.5,y:0.65};
+	this.scale.setTo(0.25);
+	this.angle = 90;
+	
+	Septikon.group.add(this);
 	//set color based on player obj
 	//this.color = player.color;
 }
+
+Septikon.Clone.prototype = Object.create(Phaser.Sprite.prototype);
+Septikon.Clone.prototype.constructor = Septikon.Clone;

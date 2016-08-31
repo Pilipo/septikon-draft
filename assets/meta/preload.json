@@ -1,0 +1,25 @@
+{
+    "assets": {
+        "board_image": {"type": "image", "source": "assets/images/board-small.png"},
+		"clone_spritesheet": {"type": "image", "source": "assets/images/clone.png"
+    },
+    "groups": [
+        "background",
+		"board",
+		"foreground",
+        "player1",
+        "player2",
+        "hud"
+    ],
+    "prefabs": {
+        "board": {
+            "type": "board",
+            "position": {"x": 0, "y": 0},
+            "properties": {
+                "texture": "",
+                "group": "board",
+                "pool": "board"
+            }
+        }
+    }
+}

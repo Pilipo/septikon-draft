@@ -19,7 +19,7 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(1000, 800, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game('100%', '100%', Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() { 
 
@@ -38,36 +38,7 @@ function create() {
 	
 	Septikon.create(game);
 	
-	clone = Septikon.clone;
-		
-	  //TESTING
-	var graphics = game.add.graphics(100, 100);
-	graphics.beginFill(0xFF3300);
-	graphics.drawRect(0, 0, 1000, 100);
-	devPanel = this.game.add.sprite(0, 700, graphics.generateTexture());
-	devPanel.inputEnabled = true;
-    devPanel.events.onInputDown.add(Septikon.rollDice);
-	graphics.destroy();
-    
-  
-    game.helpTitle = game.add.text(50, 5, '', { fill: '#ffffff' });
-    game.helpInfo = game.add.text(50, 670, '', { fill: '#dddddd' });
-	game.dice = game.add.text(50, 750, 'Click to Roll (it will show in console logs)', { fill: '#dddddd' });
-
-    tileManager = Septikon.createTiles(game);
-        
-    //END TESTING
-    
-       
-
     cursors = game.input.keyboard.createCursorKeys();
-
-    this.wasd = {
-        up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-        down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-        left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-        right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-    };
 	
 	this.camControl = {
 		zoomTeam1: game.input.keyboard.addKey(Phaser.Keyboard.NUMPAD_1),
@@ -86,81 +57,7 @@ var isMoving = false;
 
 function update() {
     var direction;
-	
-    if (this.wasd.left.isDown && !this.isMovingX)
-    {
-		if(Septikon.group.angle == -90){
-			Septikon.clone.y -=3;
-		}
-		else if (Septikon.group.angle == 90){
-			Septikon.clone.y +=3;
-		}
-		else {
-			Septikon.clone.x -=3;
-		}
-		
-        if(Septikon.checkWall(direction, clone.xCoord, clone.yCoord)) {
-            this.isMoving = true;
-            this.previous = Septikon.clone.body.x;
-            //this.targetX = this.previousX-29;
-            //Septikon.clone.xCoord--;
-        }
-    }
-    else if (this.wasd.right.isDown && !this.isMovingX)
-    {
- 		if(Septikon.group.angle == -90){
-			Septikon.clone.y +=3;
-			direction = "North";}
-		else if (Septikon.group.angle == 90){
-			Septikon.clone.y -=3;
-			direction = "South";}
-		else{
-			Septikon.clone.x +=3;
-			direction = "East";}
-       //if(Septikon.checkWall("East", clone.xCoord, clone.yCoord)) {
-            //this.isMovingX = true;
-            //this.previousX = clone.body.x;
-            //this.targetX = this.previousX+29;
-            //clone.xCoord++;
-        //}
-    }
-	else if (this.wasd.up.isDown && !this.isMovingY)
-    {
- 		if(Septikon.group.angle == -90){
-			Septikon.clone.x +=3;
-			direction = "East";}
-		else if (Septikon.group.angle == 90){
-			Septikon.clone.x -=3;
-			direction = "West";}
-		else{
-			Septikon.clone.y -=3;
-			direction = "North";}
-        //if(Septikon.checkWall("North", clone.xCoord, clone.yCoord)) {
-            //this.isMovingY = true;
-            //this.previousY = clone.body.y;
-            //this.targetY = this.previousY-29;
-            //clone.yCoord--;
-        //}
-    }
-    else if (this.wasd.down.isDown && !this.isMovingY)
-    {
- 		if(Septikon.group.angle == -90){
-			Septikon.clone.x -=3;
-			direction = "West";}
-		else if (Septikon.group.angle == 90){
-			Septikon.clone.x +=3;
-			direction = "East";}
-		else{
-			Septikon.clone.y +=3;
- 			direction = "South";}
-       //if(Septikon.checkWall("South", clone.xCoord, clone.yCoord)) {
-            //this.isMovingY = true;
-            //this.previousY = clone.body.y;
-           // this.targetY = this.previousY+29;
-           // clone.yCoord++;
-        //}
-    }
-	
+
 	if(this.camControl.zoomTeam1.isDown)
 	{
 		tweenTurn1 = game.add.tween(Septikon.group);
@@ -215,38 +112,7 @@ function update() {
 		tweenZoom3.start();
 	}
 
-    
-    if(this.isMovingX) {
-        //LEFT of target?
-        if (this.previousX > this.targetX && clone.body.x <= this.targetX) {
-            this.isMovingX = false;
-        }
-        else if (this.previousX < this.targetX && clone.body.x >= this.targetX) {
-            this.isMovingX = false;
-        }
-        else if (this.previousX > this.targetX) {
-            clone.body.velocity.x = -200;
-        }
-        else if (this.previousX < this.targetX) {
-            clone.body.velocity.x = 200;
-        }
-    }
-    if(this.isMovingY) {
-        //LEFT of target?
-        if (this.previousY > this.targetY && clone.body.y <= this.targetY) {
-            this.isMovingY = false;
-        }
-        else if (this.previousY < this.targetY && clone.body.y >= this.targetY) {
-            this.isMovingY = false;
-        }
-        else if (this.previousY > this.targetY) {
-            clone.body.velocity.y = -200;
-        }
-        else if (this.previousY < this.targetY) {
-            clone.body.velocity.y = 200;
-        }
-    }
-	
+    	
     if (cursors.up.isDown)
     {
 		if (cursors.up.shiftKey)
@@ -292,15 +158,8 @@ function update() {
             Septikon.group.x -= 4;
         }
     }
-	
-	//Septikon.worldScale = Phaser.Math.clamp(Septikon.worldScale, 0.25, 2);
-	//game.world.scale.set(Septikon.worldScale);
 }
 
-function render() {
-
-    //game.debug.cameraInfo(game.camera, 32, 32);
-}
 </script>
 
 </body>
