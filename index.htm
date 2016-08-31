@@ -51,18 +51,13 @@ function create() {
     
 }
 
-var movementRate = 150;
-var target;
-var isMoving = false;
-
 function update() {
-    var direction;
 
 	if(this.camControl.zoomTeam1.isDown)
 	{
 		tweenTurn1 = game.add.tween(Septikon.group);
 		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.5,y: 1.5}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn1.to({x: 500, y:-50, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: Septikon.boardCenterX, y:-50, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn1.start();
 		tweenZoom1.start();
 	}
@@ -71,7 +66,7 @@ function update() {
 	{
 		tweenTurn2 = game.add.tween(Septikon.group);
 		tweenZoom2 = game.add.tween(Septikon.group.scale).to({x: 1.5,y: 1.5}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn2.to({x: 500, y:-50, angle:90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn2.to({x: Septikon.boardCenterX, y:-50, angle:90}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn2.start();
 		tweenZoom2.start();
 	}
@@ -80,7 +75,7 @@ function update() {
 	{
 		tweenTurn1 = game.add.tween(Septikon.group);
 		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.1,y: 1.1}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn1.to({x: 480, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: Septikon.boardCenterX-30, y:game.world.centerY, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn1.start();
 		tweenZoom1.start();
 	}
@@ -89,7 +84,7 @@ function update() {
 	{
 		tweenTurn1 = game.add.tween(Septikon.group);
 		tweenZoom1 = game.add.tween(Septikon.group.scale).to({x: 1.1,y: 1.1}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn1.to({x: 520, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn1.to({x: Septikon.boardCenterX+30, y:game.world.centerY, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn1.start();
 		tweenZoom1.start();
 	}
@@ -98,7 +93,7 @@ function update() {
 	{
 		tweenTurn3 = game.add.tween(Septikon.group);
 		tweenZoom3 = game.add.tween(Septikon.group.scale).to({x: 1,y: 1}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn3.to({x: 500, y:350, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.to({x: Septikon.boardCenterX, y:game.world.centerY, angle:0}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn3.start();
 		tweenZoom3.start();
 	}
@@ -107,7 +102,7 @@ function update() {
 	{
 		tweenTurn3 = game.add.tween(Septikon.group);
 		tweenZoom3 = game.add.tween(Septikon.group.scale).to({x: 1.75,y: 1.75}, 1000, Phaser.Easing.Quadratic.InOut);
-		tweenTurn3.to({x: 500, y:350, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
+		tweenTurn3.to({x: Septikon.boardCenterX, y:game.world.centerY, angle:-90}, 1000, Phaser.Easing.Quadratic.InOut);
 		tweenTurn3.start();
 		tweenZoom3.start();
 	}

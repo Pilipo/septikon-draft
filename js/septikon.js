@@ -4,6 +4,8 @@ Septikon.directions = {N:1,E:2,S:4,W:8};
 Septikon.playerPositions = {local:1, remote:2};
 Septikon.tileSize = 25;
 Septikon.tileGap = 4.89;
+Septikon.boardCenterX;
+Septikon.boardCenterY;
 
 	
 Septikon.preload= function(game) {
@@ -14,6 +16,7 @@ Septikon.preload= function(game) {
 Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 	moves--;
 	var legalMoves = [];
+	
 	
 	dir={North:1,East:2,South:4,West:8};
 
@@ -29,9 +32,9 @@ Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 			}
 			else {
 				var returnArray = (Septikon.getLegalMoves(moves, moveCheck, currentCoord));
-				for(var i=0; i<returnArray.length; i++) {
-					if(JSON.stringify(returnArray[i]) !== JSON.stringify(currentCoord))
-						legalMoves.push(returnArray[i]);
+				for(index in returnArray) {
+					if(JSON.stringify(returnArray[index]) !== JSON.stringify(currentCoord))
+						legalMoves.push(returnArray[index]);
 				}
 			}
 		}
@@ -41,10 +44,15 @@ Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 		
 Septikon.create= function(game) {
 	this.group = game.add.group();
-	
+	this.groupHUDRight = game.add.group();
+	this.groupHUDLeft = game.add.group();
+
 	Septikon.board = game.add.sprite(game.world.centerX, game.world.centerY, 'board');
 	Septikon.board.anchor.set(0.5);
-
+	
+	Septikon.boardCenterX = game.world.centerX;
+	Septikon.boardCenterY = game.world.centerY;
+	
 	this.player1 = new Septikon.Player("Player 1", "Red", Septikon.playerPositions.local);
 	this.player2 = new Septikon.Player("Player 2", "Blue",  Septikon.playerPositions.remote);
 
@@ -56,13 +64,20 @@ Septikon.create= function(game) {
 	//this.player2.initResources(game, this.player2);
 
 	this.group.pivot = {x:game.world.centerX,y:game.world.centerY};
-	this.group.x = game.world.centerX;
-	this.group.y = game.world.centerY;
-
+	this.group.x = Septikon.boardCenterX;
+	this.group.y = Septikon.boardCenterY;
+	
+	this.groupHUDRight.x = game.world.width;
+	
 	this.createTiles(game);
 	
-	
+	Septikon.player1HUD = new Septikon.HUD(game, 'player1-HUD', "right", {title:this.player1.name});
+	//Septikon.logsHUD = new Septikon.HUD(game, 'logs-HUD', "left");
 };
+
+Septikon.update = function() {
+	
+}
 		
 Septikon.createTiles= function(game){
 	
@@ -159,7 +174,7 @@ Septikon.createTiles= function(game){
 		
 		
 Septikon.listener= function (obj) {
-	this.player1.AddClone(obj);
+	Septikon.player1.AddClone(obj);
 };
 
 Septikon.xCoordsToPixel= function (x) {
@@ -202,19 +217,27 @@ Septikon.checkWall= function (direction, currentCoord) {
 
 Septikon.rollDice= function(){
 	roll = Math.floor(Math.random() * 6) + 1;
-	console.log(Septikon.getLegalMoves(3,{x:1,y:10}));
+	//roll = 2;
+	console.log("=================");
+	
+	for(index in Septikon.player1.cloneCollection){
+		x = Septikon.player1.cloneCollection[index].xCoord;
+		y = Septikon.player1.cloneCollection[index].yCoord;
+		console.log("Clone: x:"+x+":"+"y:"+y)
+		console.log("Legal moves:");
+		console.log(Septikon.getLegalMoves(roll,{x:parseInt(x), y:parseInt(y)}));
+		console.log("=================");
+	}
+	Septikon.player1HUD.rollText.text = roll;
 	return roll;  
 };
 
 Septikon.getCoordFromDirection= function(originCoord,direction) {
 
-	var dir={North:{"y":-1},East:{"x":1},South:{"y":1},West:{"x":-1}};
+	var dir={North:{x:0,y:-1},East:{x:1,y:0},South:{x:0,y:1},West:{x:-1,y:0}};
 	
-	if (typeof(dir[direction].y) !== "undefined")
-		return {x:originCoord.x, y: originCoord.y + parseInt(dir[direction].y)};
+	return {x:(parseInt(originCoord.x) + parseInt(dir[direction].x)), y:(parseInt(originCoord.y) + parseInt(dir[direction].y))};
 		
-	if (typeof(dir[direction].x) !== "undefined")
-		return {x:originCoord.x + parseInt(dir[direction].x), y: originCoord.y}
 };
 
 Septikon.Player = function(name, color, playerPosition) {
@@ -292,7 +315,6 @@ Septikon.Player = function(name, color, playerPosition) {
 	this.cloneCollection = [];
 	
 	this.AddClone = function(tile) {
-	console.log(tile);
 		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileOwner != Septikon.playerPositions.local)
 			return false;
 		
@@ -300,8 +322,8 @@ Septikon.Player = function(name, color, playerPosition) {
 			return false;
 		
 		clone = new Septikon.Clone(game, 'clone', {x:tile.xCoord, y:tile.yCoord}, {texture:""});
-		clone.xCoord = tile.xCoord;
-		clone.yCoord = tile.yCoord;
+		clone.xCoord = parseInt(tile.xCoord);
+		clone.yCoord = parseInt(tile.yCoord);
 		this.cloneCollection.push(clone);
 	};
 		
@@ -330,7 +352,6 @@ Septikon.Player = function(name, color, playerPosition) {
 Septikon.Resource = function(game, position, properties) {
 
 	var graphics = game.add.graphics(25, 25);
-	//console.log(properties.player.ResourceManager.types[properties.type].color);
 	graphics.lineColor = 0x000000;
 	graphics.lineWidth = 2;
 	graphics.beginFill(properties.player.ResourceManager.types[properties.type].color);
@@ -340,7 +361,7 @@ Septikon.Resource = function(game, position, properties) {
 	this.yCoord = position.y;
 	Phaser.Sprite.call(this, game, Septikon.xCoordsToPixel(this.xCoord), Septikon.yCoordsToPixel(this.yCoord), graphics.generateTexture());
 	this.anchor.set(0.5);
-	this.angle = 5;
+	this.angle = Math.floor(Math.random() * 21) - 5;
 	this.type = properties.player.ResourceManager.types[properties.type];	
 	this.isDamaged = false;
 	
@@ -366,6 +387,43 @@ Septikon.Clone = function(game, name, position, properties) {
 	//set color based on player obj
 	//this.color = player.color;
 }
-
 Septikon.Clone.prototype = Object.create(Phaser.Sprite.prototype);
 Septikon.Clone.prototype.constructor = Septikon.Clone;
+
+Septikon.HUD = function(game, name, orientation, properties) {
+	var hudGraphic = game.add.graphics(25, 25);
+	hudGraphic.lineColor = 0x000000;
+	hudGraphic.lineWidth = 2;
+	hudGraphic.beginFill(0xF98C15);
+	hudGraphic.drawRoundedRect(0, 0, 280, 500, 15);
+	Phaser.Sprite.call(this, game, 0, Septikon.boardCenterY, hudGraphic.generateTexture());
+	
+	var rollGraphic = game.add.graphics(25, 25);
+	rollGraphic.lineColor = 0x000000;
+	rollGraphic.lineWidth = 2;
+	rollGraphic.beginFill(0x952327);
+	rollGraphic.drawRoundedRect(0, 0, 50, 50, 15);
+	//var rollSprite = game.add.sprite(-75, Septikon.boardCenterY, rollGraphic.generateTexture());
+	var rollButton = game.add.button(-75, Septikon.boardCenterY, rollGraphic.generateTexture(), Septikon.rollDice, this);
+	
+	rollButton.anchor.set(0.5);
+	
+	this.anchor = {x:0.5,y:0.5};
+	
+	Septikon.groupHUDRight.add(this);
+	Septikon.groupHUDRight.add(rollButton);
+	
+	var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+	this.text = game.add.text(hudGraphic.width/4*-1, Septikon.boardCenterY-hudGraphic.height/2+40, properties.title, style, Septikon.groupHUDRight);
+	this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
+	this.text.anchor.set(0.5);
+	
+	this.rollText = game.add.text(rollButton.x, rollButton.y, "Roll", style, Septikon.groupHUDRight);
+	this.rollText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
+	this.rollText.anchor.set(0.5);
+
+	hudGraphic.destroy();
+	rollGraphic.destroy();
+}
+Septikon.HUD.prototype = Object.create(Phaser.Sprite.prototype);
+Septikon.HUD.prototype.constructor = Septikon.HUD;
