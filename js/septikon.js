@@ -6,6 +6,7 @@ Septikon.tileSize = 25;
 Septikon.tileGap = 4.89;
 Septikon.boardCenterX;
 Septikon.boardCenterY;
+Septikon.rollValue = 0;
 
 	
 Septikon.preload= function(game) {
@@ -69,7 +70,7 @@ Septikon.create= function(game) {
 	
 	this.groupHUDRight.x = game.world.width;
 	
-	this.createTiles(game);
+	Septikon.tileCollection = this.createTiles(game);
 	
 	Septikon.player1HUD = new Septikon.HUD(game, 'player1-HUD', "right", {title:this.player1.name});
 	//Septikon.logsHUD = new Septikon.HUD(game, 'logs-HUD', "left");
@@ -102,7 +103,15 @@ Septikon.createTiles= function(game){
 			currentTile.title = "tile_" + tile_col + "_" + tile_row;
 			currentTile.x = Septikon.tileStartX + (Septikon.tileSize * tile_col) + (Septikon.tileGap * tile_col);
 			currentTile.y = Septikon.tileStartY + (Septikon.tileSize * tile_row) + (Septikon.tileGap * tile_row);
-			currentTile.alpha = 0.2;
+			currentTile.alpha = 0;
+			
+			currentTile.illuminate = function(currentTile){
+				game.time.events.add(2000, function() {    
+					game.add.tween(currentTile).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+				}, this);
+				
+				currentTile.alpha = 1;
+			}
 			
 			currentTile.inputEnabled = true;
 			currentTile.events.onInputDown.add(Septikon.listener, this);
@@ -177,6 +186,18 @@ Septikon.listener= function (obj) {
 	Septikon.player1.AddClone(obj);
 };
 
+Septikon.test = function(obj){
+	if(Septikon.rollValue == 0)
+		return false;
+	
+	var moves = Septikon.getLegalMoves(Septikon.rollValue, {x:obj.xCoord,y:obj.yCoord});
+	var tile;
+	for (i in moves){
+		tile = Septikon.tileCollection[moves[i].x][moves[i].y];
+		tile.illuminate(tile);
+	}
+	
+}
 Septikon.xCoordsToPixel= function (x) {
 	return Septikon.tileStartX + (x * (Septikon.tileSize+Septikon.tileGap));
 };
@@ -217,6 +238,7 @@ Septikon.checkWall= function (direction, currentCoord) {
 
 Septikon.rollDice= function(){
 	roll = Math.floor(Math.random() * 6) + 1;
+	Septikon.rollValue = roll;
 	//roll = 2;
 	console.log("=================");
 	
@@ -324,6 +346,9 @@ Septikon.Player = function(name, color, playerPosition) {
 		clone = new Septikon.Clone(game, 'clone', {x:tile.xCoord, y:tile.yCoord}, {texture:""});
 		clone.xCoord = parseInt(tile.xCoord);
 		clone.yCoord = parseInt(tile.yCoord);
+		clone.inputEnabled = true;
+		clone.events.onInputDown.add(Septikon.test, clone);
+
 		this.cloneCollection.push(clone);
 	};
 		
