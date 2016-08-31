@@ -1,17 +1,25 @@
-var Septikon = (function(){
+var Septikon = function(){
 
 
 	var directions = {N:1,E:2,S:4,W:8};	
 	var playerPositions;
+		var clone;
+		var board;
+		var group;
+		var tileSize = 25;
+		var tileCountX = 31;
+		var tileCountY = 21;
+		var tileGap = 4.89;
+		var playerPositions = {local:1, remote:2};
 
-	return {
+}
 	
-		preload: function(game) {
+Septikon.preload= function(game) {
 			game.load.image('board', 'assets/medium_board.png');
 			game.load.image('clone', 'assets/clone.png');
-		},
+		};
 		
-		getLegalMoves: function(moves, currentCoord, previousCoord) {
+		Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 			moves--;
 			var legalMoves = [];
 			
@@ -37,9 +45,9 @@ var Septikon = (function(){
 				}
 			}
 			return legalMoves;
-		},
+		};
 		
-		create: function(game) {
+		Septikon.create= function(game) {
 		
 			this.group = game.add.group();
 			
@@ -57,9 +65,9 @@ var Septikon = (function(){
 			this.group.x = game.world.centerX;
 			this.group.y = game.world.centerY;
 			this.createTiles(game);
-		},
+		};
 		
-		createTiles: function(game){
+		Septikon.createTiles= function(game){
 			
 			var graphics = game.add.graphics(0,0);
 			
@@ -154,30 +162,22 @@ var Septikon = (function(){
 			graphics.destroy();
 			
 			return tileArray;
-		},
+		};
 		
-		clone: this.clone,
-		board: this.board,
-		group: this.group,
-		tileSize: this.tileSize = 25,
-		tileCountX: this.tileCountX = 31,
-		tileCountY: this.tileCountY = 21,
-		tileGap: this.tileGap = 4.89,
-		playerPositions: this.playerPositions = {local:1, remote:2},
 		
-		listener: function (obj) {
+		Septikon.listener= function (obj) {
 			this.player1.AddClone(obj);
-		},
+		};
 
-		xCoordsToPixel: function (x) {
+		Septikon.xCoordsToPixel= function (x) {
 			return Septikon.tileStartX + (x * (Septikon.tileSize+Septikon.tileGap));
-		},
+		};
 
-		yCoordsToPixel: function (y) {
+		Septikon.yCoordsToPixel= function (y) {
 			return Septikon.tileStartY + (y * (Septikon.tileSize+Septikon.tileGap));
-		},
+		};
 
-		checkWall: function (direction, currentCoord) {
+		Septikon.checkWall= function (direction, currentCoord) {
 		
 			var dir={North:1,East:2,South:4,West:8};
 			
@@ -205,15 +205,15 @@ var Septikon = (function(){
 				default:
 					return false;
 			}
-		},
+		};
 		
-		rollDice: function(){
+		Septikon.rollDice= function(){
 			roll = Math.floor(Math.random() * 6) + 1;
 			console.log(Septikon.getLegalMoves(3,{x:1,y:10}));
 			return roll;  
-		}, 
+		};
 		
-		getCoordFromDirection: function(originCoord,direction) {
+		Septikon.getCoordFromDirection= function(originCoord,direction) {
 		
 			var dir={North:{"y":-1},East:{"x":1},South:{"y":1},West:{"x":-1}};
 			
@@ -222,11 +222,8 @@ var Septikon = (function(){
 				
 			if (typeof(dir[direction].x) !== "undefined")
 				return {x:originCoord.x + parseInt(dir[direction].x), y: originCoord.y}
-		}
+		};
 	
-	};
-
-})();
 
 Septikon.Game = function() {
 	
