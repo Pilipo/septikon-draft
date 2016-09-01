@@ -46,14 +46,13 @@ Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 Septikon.create= function(game) {
 	this.group = game.add.group();
 	this.groupHUDRight = game.add.group();
-	this.groupHUDLeft = game.add.group();
-	this.rollGroup = game.add.group();
-
+	this.groupPopups = game.add.group();
+	this.groupDice = game.add.group();
 
 	Septikon.board = game.add.sprite(game.world.centerX, game.world.centerY, 'board');
 	Septikon.board.anchor.set(0.5);
 	
-	Septikon.boardCenterX = game.world.centerX;
+	Septikon.boardCenterX = game.world.centerX - 75;
 	Septikon.boardCenterY = game.world.centerY;
 	
 	this.player1 = new Septikon.Player("Player 1", "Red", Septikon.playerPositions.local);
@@ -70,13 +69,17 @@ Septikon.create= function(game) {
 	this.group.x = Septikon.boardCenterX;
 	this.group.y = Septikon.boardCenterY;
 	
-	this.groupHUDRight.x = game.world.width;
+	this.groupHUDRight.x = this.groupDice.x = game.world.width;
+	this.groupDice.visible = false;
 	
 	Septikon.tileCollection = this.createTiles(game);
 	
 	Septikon.player1HUD = new Septikon.HUD(game, 'player1-HUD', "right", {title:this.player1.name});
 	//Septikon.logsHUD = new Septikon.HUD(game, 'logs-HUD', "left");
-	};
+	
+	this.welcomePopup = new Septikon.popup(game, {x:0,y:0}, {title:"Welcome to Septikon!",content:"To begin, place clones on legal tiles. Navigate the board with the arrow keys and num keys on your keyboard. \n{1, 3, and 5 in particular}", buttons:[{title:"Got it!",callback:Septikon.groupPopups.removeAll, context:Septikon.groupPopups}]});
+
+};
 
 Septikon.update = function() {
 	
@@ -92,9 +95,9 @@ Septikon.createTiles= function(game){
 	var tileCountY = 21;
 
 	
-	graphics.beginFill(0xFF3300);
-	graphics.lineStyle(1, 0xffd900, 1);
-	graphics.drawRoundedRect(0, 0, Septikon.tileSize, Septikon.tileSize, 2);
+	//graphics.beginFill(0xFF3300);
+	graphics.lineStyle(4, 0xffd900, 1);
+	graphics.drawRoundedRect(0, 0, Septikon.tileSize+3, Septikon.tileSize+3, 2);
 	 
 	for(var tile_col = 0; tile_col < tileCountX; tile_col++)
 	{
@@ -183,29 +186,35 @@ Septikon.createTiles= function(game){
 	return tileArray;
 };
 		
+Septikon.beginGame = function(){
+	console.log("Let's get it started.");
+	Septikon.setupMode = false;
+	Septikon.groupPopups.removeAll(Septikon.groupPopups);
+	Septikon.groupDice.visible = true;
+
+}
 		
 Septikon.listener= function (obj) {
-	if(Septikon.setupMode == true)	
-		Septikon.player1.AddClone(obj);
+	Septikon.player1.addClone(obj);
 };
 
 Septikon.test = function(obj){
-	
-		
-	if(Septikon.setupMode == true)
-		Septikon.player1.RemoveClone(obj);
-		
-	if(Septikon.rollValue == 0)
-		return false;
-		
-	var moves = Septikon.getLegalMoves(Septikon.rollValue, {x:obj.xCoord,y:obj.yCoord});
-	var tile;
-	for (i in moves){
-		tile = Septikon.tileCollection[moves[i].x][moves[i].y];
-		tile.illuminate(tile);
+	if(Septikon.setupMode === true){
+		Septikon.player1.removeClone(obj);		
 	}
-	
+	else {
+		if(typeof(Septikon.rollValue) === 'undefined' || Septikon.rollValue < 1)
+			return false;
+		
+		var moves = Septikon.getLegalMoves(Septikon.rollValue, {x:obj.xCoord,y:obj.yCoord});
+		var tile;
+		for (i in moves){
+			tile = Septikon.tileCollection[moves[i].x][moves[i].y];
+			tile.illuminate(tile);
+		}
+	}
 }
+
 Septikon.xCoordsToPixel= function (x) {
 	return Septikon.tileStartX + (x * (Septikon.tileSize+Septikon.tileGap));
 };
@@ -344,13 +353,16 @@ Septikon.Player = function(name, color, playerPosition) {
 	
 	this.cloneCollection = [];
 	
-	this.AddClone = function(tile) {
+	this.addClone = function(tile) {
 		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileOwner != Septikon.playerPositions.local)
 			return false;
+		if(this.ResourceManager.CountAvailableResources('oxygen',this) == this.cloneCollection.length+1){
+			Septikon.confirmInit = new Septikon.popup(game, {x:0,y:0}, {title:"Confirm Placement?",content:"You have placed all available clones. Would you like to confirm and begin mining?", buttons:[{title:"Confirm",callback:Septikon.beginGame},{title:"Cancel",callback:Septikon.groupPopups.removeAll, context:Septikon.groupPopups}]});
+		}
 		
-		if(this.ResourceManager.CountAvailableResources('oxygen',this) <= this.cloneCollection.length)
+		if(this.ResourceManager.CountAvailableResources('oxygen',this) <= this.cloneCollection.length){
 			return false;
-		
+		}
 		clone = new Septikon.Clone(game, 'clone', {x:tile.xCoord, y:tile.yCoord}, {texture:""});
 		clone.xCoord = parseInt(tile.xCoord);
 		clone.yCoord = parseInt(tile.yCoord);
@@ -360,9 +372,9 @@ Septikon.Player = function(name, color, playerPosition) {
 		this.cloneCollection.push(clone);
 	};
 	
-	this.RemoveClone = function(clone){
-		
-		this.cloneCollection.splice(this.cloneCollection.indexOf(clone),1);	
+	this.removeClone = function(clone) {
+		var index = Septikon.player1.cloneCollection.indexOf(clone);
+		Septikon.player1.cloneCollection.splice(index,1);
 		clone.destroy();
 	}
 		
@@ -429,14 +441,6 @@ Septikon.Clone = function(game, name, position, properties) {
 Septikon.Clone.prototype = Object.create(Phaser.Sprite.prototype);
 Septikon.Clone.prototype.constructor = Septikon.Clone;
 
-Septikon.playerText = function()  {
-	var style = { font: "20px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-	this.text = game.add.text(0, 0, "test", style, Septikon.groupHUDRight);
-	this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
-	this.text.anchor.set(0.5);
-
-}
-
 Septikon.HUD = function(game, name, orientation, properties) {
 	var hudGraphic = game.add.graphics(25, 25);
 	hudGraphic.lineColor = 0x000000;
@@ -451,29 +455,90 @@ Septikon.HUD = function(game, name, orientation, properties) {
 	rollGraphic.beginFill(0x952327);
 	rollGraphic.drawRoundedRect(0, 0, 50, 50, 15);
 	var rollButton = game.add.button(-75, Septikon.boardCenterY, rollGraphic.generateTexture(), Septikon.rollDice, this);
-	Septikon.rollGroup.add(rollButton);
 	
 	rollButton.anchor.set(0.5);
 	
 	this.anchor = {x:0.5,y:0.5};
 	
 	Septikon.groupHUDRight.add(this);
-	Septikon.groupHUDRight.add(Septikon.rollGroup);
-	Septikon.rollGroup.visible = false;
+	Septikon.groupDice.add(rollButton);
 	
 	var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 	this.text = game.add.text(hudGraphic.width/4*-1, Septikon.boardCenterY-hudGraphic.height/2+40, properties.title, style, Septikon.groupHUDRight);
 	this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
 	this.text.anchor.set(0.5);
 	
-	this.rollText = game.add.text(rollButton.x, rollButton.y, "Roll", style, Septikon.groupHUDRight);
+	this.rollText = game.add.text(rollButton.x, rollButton.y, "Roll", style, Septikon.groupDice);
 	this.rollText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
 	this.rollText.anchor.set(0.5);
-	Septikon.rollGroup.add(this.rollText);
-
 
 	hudGraphic.destroy();
 	rollGraphic.destroy();
 }
 Septikon.HUD.prototype = Object.create(Phaser.Sprite.prototype);
 Septikon.HUD.prototype.constructor = Septikon.HUD;
+
+Septikon.popup = function(game, position, properties) {
+	var buttons = [];
+	var buttonCount = properties.buttons.length;
+	var graphics = game.add.graphics(Septikon.boardCenterX, Septikon.boardCenterY);
+	graphics.lineColor = 0x000000;
+	graphics.lineWidth = 2;
+	graphics.beginFill(0xb74549);
+	graphics.drawRoundedRect(Septikon.boardCenterX, Septikon.boardCenterY, 400, 200, 8);
+
+	Phaser.Sprite.call(this, game, Septikon.boardCenterX, Septikon.boardCenterY, graphics.generateTexture());
+	this.anchor.set(0.5);
+	this.x = Septikon.boardCenterX;
+	this.y = Septikon.boardCenterY;
+	
+	Septikon.groupPopups.add(this);
+	
+	var titleStyle = { font: "bold 24px Impact", fill: "#FBAE37", boundsAlignH: "center", boundsAlignV: "middle" };
+	
+	this.title = game.add.text(Septikon.boardCenterX, Septikon.boardCenterY-graphics.height/2+20, properties.title, titleStyle, Septikon.groupPopups);
+	this.title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 4);
+	this.title.anchor.set(0.5);
+
+	var contentStyle = { font: "16px Impact", fill: "#000", boundsAlignH: "center", boundsAlignV: "top", align:"center",wordWrap: true, wordWrapWidth: 300  };
+	var content = game.add.text(Septikon.boardCenterX, Septikon.boardCenterY, properties.content, contentStyle, Septikon.groupPopups);
+	content.align = 'center';
+	content.anchor.set(0.5);
+	for(index in properties.buttons){
+		var button = new Septikon.button(game, properties.buttons[index].title, {x:this.x-(40*(buttonCount-1))+(80*index),y:this.y+this.height/2-30});
+		if(typeof(properties.buttons[index].context)==='undefine')
+			var context = this;
+		else
+			var context = properties.buttons[index].context;
+		button.onInputUp.add(properties.buttons[index].callback, context);
+	}
+	
+	graphics.destroy();
+
+}
+Septikon.popup.prototype = Object.create(Phaser.Sprite.prototype);
+Septikon.popup.prototype.constructor = Septikon.popup;
+
+Septikon.button = function(game, name, position, callback, properties){
+	
+	var graphics = game.add.graphics(0, 0);
+	graphics.lineColor = 0x000000;
+	graphics.lineWidth = 2;
+	graphics.beginFill(0xFBAE37);
+	graphics.drawRoundedRect(0, 0, 75, 25, 4);
+
+	Phaser.Button.call(this, game, position.x, position.y, graphics.generateTexture());
+	this.anchor.set(0.5);
+	Septikon.groupPopups.add(this);
+	
+	var titleStyle = { font: "16px Impact", fill: "#000", boundsAlignH: "center", boundsAlignV: "middle" };
+	
+	this.title = game.add.text(position.x, position.y+2, name, titleStyle, Septikon.groupPopups);
+	this.title.anchor.set(0.5);
+
+	
+	graphics.destroy();
+
+}
+Septikon.button.prototype = Object.create(Phaser.Button.prototype);
+Septikon.button.prototype.constructor = Septikon.button;
