@@ -1,6 +1,6 @@
 {
   "name": "septikon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Port of Septikon board game",
   "main": "index.js",
   "scripts": {
