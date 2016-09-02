@@ -198,12 +198,20 @@ Septikon.beginGame = function(){
 Septikon.listener= function (obj) {
 	for(index in Septikon.player1.movementManager.selectedLegalMoves) {
 		if(Septikon.player1.movementManager.selectedLegalMoves[index].x == obj.xCoord && Septikon.player1.movementManager.selectedLegalMoves[index].y == obj.yCoord) {
+			
 			Septikon.player1.movementManager.selectedClone.move(Septikon.player1.movementManager.selectedLegalMoves[index]);
 			
 			if(obj.tileType == "surface") 
 				Septikon.player1.movementManager.selectedClone.isGunner = true;
 			else
 				Septikon.player1.movementManager.selectedClone.isGunner = false;
+			
+			if(obj.tileType == "armory") {
+				for(index in Septikon.player1.cloneCollection) {
+					if(Septikon.player1.cloneCollection[index].arm.indexOf(obj.tileName) == -1)
+						Septikon.player1.cloneCollection[index].arm.push(obj.tileName);
+				}
+			}
 
 			for(index in Septikon.player1.movementManager.selectedLegalMoves) {
 				Septikon.tileCollection[Septikon.player1.movementManager.selectedLegalMoves[index].x][Septikon.player1.movementManager.selectedLegalMoves[index].y].highlightDown()
@@ -432,6 +440,7 @@ Septikon.Clone = function(game, name, position, properties) {
 	this.xCoord = position.x;
 	this.yCoord = position.y;
 	this.isGunner = false;
+	this.arm = [];
 	Phaser.Sprite.call(this, game, Septikon.xCoordsToPixel(this.xCoord), Septikon.yCoordsToPixel(this.yCoord), 'clone');
 	this.anchor = {x:0.5,y:0.65};
 	this.scale.setTo(0.25);
