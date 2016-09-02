@@ -354,7 +354,7 @@ Septikon.Player = function(name, color, playerPosition) {
 	this.cloneCollection = [];
 	
 	this.addClone = function(tile) {
-		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileOwner != Septikon.playerPositions.local)
+		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileType == "surface" || tile.tileOwner != Septikon.playerPositions.local)
 			return false;
 		if(this.ResourceManager.CountAvailableResources('oxygen',this) == this.cloneCollection.length+1){
 			Septikon.confirmInit = new Septikon.popup(game, {x:0,y:0}, {title:"Confirm Placement?",content:"You have placed all available clones. Would you like to confirm and begin mining?", buttons:[{title:"Confirm",callback:Septikon.beginGame},{title:"Cancel",callback:Septikon.groupPopups.removeAll, context:Septikon.groupPopups}]});
