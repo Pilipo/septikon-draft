@@ -17,8 +17,6 @@ Septikon.preload= function(game) {
 Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 	moves--;
 	var legalMoves = [];
-	
-	
 	dir={North:1,East:2,South:4,West:8};
 
 	for(direction in dir)
@@ -27,7 +25,7 @@ Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
 		
 		var moveCheck = this.getCoordFromDirection(currentCoord,direction);
 		
-		if(Septikon.checkWall(direction, currentCoord) === true &&  ((typeof previousCoord === 'undefined') || ((typeof previousCoord !== 'undefined') && (JSON.stringify(moveCheck) !== JSON.stringify(previousCoord))))) {
+		if(Septikon.tileCollection[currentCoord.x][currentCoord.y].isDamaged === false && Septikon.checkWall(direction, currentCoord) === true && ((typeof previousCoord === 'undefined') || ((typeof previousCoord !== 'undefined') && (JSON.stringify(moveCheck) !== JSON.stringify(previousCoord)) ))) {
 			if(moves==0){
 				legalMoves.push(moveCheck);
 			}
@@ -88,14 +86,12 @@ Septikon.update = function() {
 Septikon.createTiles= function(game){
 	
 	var graphics = game.add.graphics(0,0);
-	
+
 	var tileArray = [];
-	
+
 	var tileCountX = 31;
 	var tileCountY = 21;
 
-	
-	//graphics.beginFill(0xFF3300);
 	graphics.lineStyle(4, 0xffd900, 1);
 	graphics.drawRoundedRect(0, 0, Septikon.tileSize+3, Septikon.tileSize+3, 2);
 	 
@@ -109,17 +105,23 @@ Septikon.createTiles= function(game){
 			currentTile.x = Septikon.tileStartX + (Septikon.tileSize * tile_col) + (Septikon.tileGap * tile_col);
 			currentTile.y = Septikon.tileStartY + (Septikon.tileSize * tile_row) + (Septikon.tileGap * tile_row);
 			currentTile.alpha = 0;
+			currentTile.isDamaged = false;
 			
-			currentTile.illuminate = function(currentTile){
-				game.time.events.add(2000, function() {    
-					game.add.tween(currentTile).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
-				}, this);
-				
-				currentTile.alpha = 1;
+			currentTile.highlightUp = function(currentTile){
+				//game.time.events.add(2000, function() {    
+				//	game.add.tween(currentTile).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+				//}, this);
+				game.add.tween(currentTile).to({alpha: 1}, 250, Phaser.Easing.Linear.None, true);
 			}
-			
+			currentTile.highlightDown = function(){
+				//game.time.events.add(2000, function() {    
+				//	game.add.tween(currentTile).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+				//}, this);
+				game.add.tween(this).to({alpha: 0}, 250, Phaser.Easing.Linear.None, true);
+			}
+
 			currentTile.inputEnabled = true;
-			currentTile.events.onInputDown.add(Septikon.listener, this);
+			currentTile.events.onInputUp.add(Septikon.listener, this);
 			
 			if(tile_col<9){
 				currentTile.tileOwner = Septikon.playerPositions.local;
@@ -128,7 +130,6 @@ Septikon.createTiles= function(game){
 			if(tile_col>22){
 				currentTile.tileOwner = Septikon.playerPositions.remote;
 			}
-			
 			
 			this.group.add(currentTile);
 			
@@ -161,8 +162,8 @@ Septikon.createTiles= function(game){
 						var x = coords[0];
 						var y = coords[1];
 						
-						tileArray[x][y].xCoord = x;
-						tileArray[x][y].yCoord = y;
+						tileArray[x][y].xCoord = parseInt(x);
+						tileArray[x][y].yCoord = parseInt(y);
 
 						tileArray[x][y].tileType = obj[prop].type;
 
@@ -180,9 +181,9 @@ Septikon.createTiles= function(game){
 			}
 		});
 	});
-	
+
 	graphics.destroy();
-	
+
 	return tileArray;
 };
 		
@@ -195,25 +196,22 @@ Septikon.beginGame = function(){
 }
 		
 Septikon.listener= function (obj) {
-	Septikon.player1.addClone(obj);
-};
+	for(index in Septikon.player1.movementManager.selectedLegalMoves) {
+		if(Septikon.player1.movementManager.selectedLegalMoves[index].x == obj.xCoord && Septikon.player1.movementManager.selectedLegalMoves[index].y == obj.yCoord) {
+			Septikon.player1.movementManager.selectedClone.move(Septikon.player1.movementManager.selectedLegalMoves[index]);
 
-Septikon.test = function(obj){
-	if(Septikon.setupMode === true){
-		Septikon.player1.removeClone(obj);		
-	}
-	else {
-		if(typeof(Septikon.rollValue) === 'undefined' || Septikon.rollValue < 1)
-			return false;
-		
-		var moves = Septikon.getLegalMoves(Septikon.rollValue, {x:obj.xCoord,y:obj.yCoord});
-		var tile;
-		for (i in moves){
-			tile = Septikon.tileCollection[moves[i].x][moves[i].y];
-			tile.illuminate(tile);
+			for(index in Septikon.player1.movementManager.selectedLegalMoves) {
+				Septikon.tileCollection[Septikon.player1.movementManager.selectedLegalMoves[index].x][Septikon.player1.movementManager.selectedLegalMoves[index].y].highlightDown()
+			}
+			
+			Septikon.rollValue = 0;
+			Septikon.player1HUD.rollText.text = "Roll";
+			
 		}
 	}
-}
+	
+	Septikon.player1.addClone(obj);
+};
 
 Septikon.xCoordsToPixel= function (x) {
 	return Septikon.tileStartX + (x * (Septikon.tileSize+Septikon.tileGap));
@@ -262,10 +260,6 @@ Septikon.rollDice= function(){
 	for(index in Septikon.player1.cloneCollection){
 		x = Septikon.player1.cloneCollection[index].xCoord;
 		y = Septikon.player1.cloneCollection[index].yCoord;
-		console.log("Clone: x:"+x+":"+"y:"+y)
-		console.log("Legal moves:");
-		console.log(Septikon.getLegalMoves(roll,{x:parseInt(x), y:parseInt(y)}));
-		console.log("=================");
 	}
 	Septikon.player1HUD.rollText.text = roll;
 	return roll;  
@@ -299,6 +293,7 @@ Septikon.Player = function(name, color, playerPosition) {
 	this.shieldCollection = [];
 	this.biodroneCollection = [];
 	this.nukeCollection = [];
+	
 	
 	this.ResourceManager = {
 	
@@ -353,6 +348,11 @@ Septikon.Player = function(name, color, playerPosition) {
 	
 	this.cloneCollection = [];
 	
+	this.movementManager = {
+		selectedClone: null,
+		selectedLegalMoves: {},
+		getObjectArray: function(){}		
+	}
 	this.addClone = function(tile) {
 		if(tile.tileType == "warehouse" || tile.tileType == "space" || tile.tileType == "surface" || tile.tileOwner != Septikon.playerPositions.local)
 			return false;
@@ -367,7 +367,7 @@ Septikon.Player = function(name, color, playerPosition) {
 		clone.xCoord = parseInt(tile.xCoord);
 		clone.yCoord = parseInt(tile.yCoord);
 		clone.inputEnabled = true;
-		clone.events.onInputDown.add(Septikon.test, clone);
+		clone.events.onInputDown.add(clone.clicked, clone);
 
 		this.cloneCollection.push(clone);
 	};
@@ -424,9 +424,6 @@ Septikon.Resource.prototype = Object.create(Phaser.Sprite.prototype);
 Septikon.Resource.prototype.constructor = Septikon.Resource;
 
 Septikon.Clone = function(game, name, position, properties) {
-	//this.player = player;
-	//get the player obj
-	
 	this.xCoord = position.x;
 	this.yCoord = position.y;
 	Phaser.Sprite.call(this, game, Septikon.xCoordsToPixel(this.xCoord), Septikon.yCoordsToPixel(this.yCoord), 'clone');
@@ -440,6 +437,37 @@ Septikon.Clone = function(game, name, position, properties) {
 }
 Septikon.Clone.prototype = Object.create(Phaser.Sprite.prototype);
 Septikon.Clone.prototype.constructor = Septikon.Clone;
+Septikon.Clone.prototype.clicked = function(clone){
+	if(Septikon.setupMode === true){
+		Septikon.player1.removeClone(clone);	
+	}
+	else {
+		if(typeof(Septikon.rollValue) === 'undefined' || Septikon.rollValue < 1)
+			return false;
+		
+		Septikon.player1.movementManager.selectedClone = clone;
+		if(Septikon.player1.movementManager.selectedLegalMoves !== null) {
+			for(index in Septikon.player1.movementManager.selectedLegalMoves) {
+				Septikon.tileCollection[Septikon.player1.movementManager.selectedLegalMoves[index].x][Septikon.player1.movementManager.selectedLegalMoves[index].y].highlightDown()
+			}
+		}
+		
+		var moves = Septikon.player1.movementManager.selectedLegalMoves = Septikon.getLegalMoves(Septikon.rollValue, {x:clone.xCoord,y:clone.yCoord});
+		
+		var tile;
+		for (i in moves){
+			tile = Septikon.tileCollection[moves[i].x][moves[i].y];
+			tile.highlightUp(tile);
+		}
+	}
+};
+Septikon.Clone.prototype.move = function(coords) {
+	this.x = Septikon.tileCollection[coords.x][coords.y].x;
+	this.y = Septikon.tileCollection[coords.x][coords.y].y;
+	this.xCoord = coords.x;
+	this.yCoord = coords.y;
+	
+}
 
 Septikon.HUD = function(game, name, orientation, properties) {
 	var hudGraphic = game.add.graphics(25, 25);
