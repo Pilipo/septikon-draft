@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luketlancaster/septikon.git"
+    "url": "git+https://github.com/pilipo/septikon.git"
   },
   "author": "Phillip Lehner & Luke Lancaster",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luketlancaster/septikon/issues"
+    "url": "https://github.com/pilipo/septikon/issues"
   },
-  "homepage": "https://github.com/luketlancaster/septikon#readme",
+  "homepage": "https://github.com/pilipo/septikon#readme",
   "dependencies": {
     "express": "^4.14.0",
     "socket.io": "^1.4.8"
