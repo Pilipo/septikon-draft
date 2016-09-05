@@ -1,5 +1,6 @@
 var Septikon = Septikon || {}
 
+
 Septikon.directions = {N:1,E:2,S:4,W:8};	
 Septikon.playerPositions = {local:1, remote:2};
 Septikon.tileSize = 25;
