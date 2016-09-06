@@ -10,8 +10,8 @@ Septikon.rollValue = 0;
 Septikon.setupMode = true;
 	
 Septikon.preload= function(game) {
-	game.load.image('board', 'assets/medium_board.png');
-	game.load.image('clone', 'assets/clone.png');
+	game.load.image('board', 'assets/images/medium_board.png');
+	game.load.image('clone', 'assets/images/clone.png');
 };
 		
 Septikon.getLegalMoves= function(moves, currentCoord, previousCoord) {
@@ -54,7 +54,7 @@ Septikon.create= function(game) {
 	Septikon.boardCenterY = game.world.centerY;
 	
 	this.player1 = new Septikon.Player("Player 1", "Red", Septikon.playerPositions.local);
-	this.player2 = new Septikon.Player("Player 2", "Blue",  Septikon.playerPositions.remote);
+	//this.player2 = new Septikon.Player("Player 2", "Blue",  Septikon.playerPositions.remote);
 
 	this.group.add(Septikon.board);
 	Septikon.tileStartX = Septikon.board.x - Septikon.board.width/2 + 52;
@@ -146,7 +146,7 @@ Septikon.createTiles= function(game){
 			cache:false
 		});
 		
-		$.getJSON( "js/tiles.json", function( data ) {
+		$.getJSON( "assets/meta/tiles.json", function( data ) {
 			for(var key in data) {
 				if (!data.hasOwnProperty(key)) continue;
 				
@@ -321,14 +321,13 @@ Septikon.Player = function(name, color, playerPosition) {
 			energy2:{id:8, name:"energy2", startCoord:{x:2,y:20}, endCoord:{x:2,y:11}, color:0xFCCE00}
 		},
 	
-		GetResource: function(resourceType, player) {
-		},
 		PutResource: function(resourceType, player) {
 			console.log(this.GetResourceCount(resourceType, player));
 			
 			var resource = new Septikon.Resource(game, position, {type:resourceType, player:player});
 			player[resourceType].push(resource);
 		},
+		
 		GetResourceCount: function(resourceType, player) {
 		
 			if(typeof(player[resourceType]) === "undefined")
@@ -341,6 +340,7 @@ Septikon.Player = function(name, color, playerPosition) {
 			}
 			return availableResources;
 		},
+		
 		CountAvailableResources: function(resourceType, player) {
 			var resourceCount = 0;
 			var falseFound = false;
@@ -392,7 +392,6 @@ Septikon.Player = function(name, color, playerPosition) {
 	}
 		
 	this.initResources = function(game, player) {
-		//fill up resources
 		for(var type in player.ResourceManager.types) {
 			if(player.ResourceManager.types[type].startCoord.y < player.ResourceManager.types[type].endCoord.y) {
 				for(var i=0; i < 5; i++) {

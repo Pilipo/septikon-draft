@@ -7,7 +7,7 @@ module.exports = grunt => {
             options: {
                 port: 8888,
                 useAvailablePort: true,
-                hostname: 'localhost'
+                hostname: '192.168.2.37'
             },
 
             server: {
