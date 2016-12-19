@@ -1,0 +1,66 @@
+{
+    "$schema": "http://my-site.com/sept/tile.schema",
+    "title": "Tile",
+    "description": "A Septikon Game tile.",
+    "type": "object",
+	"properties": {
+		"classification": {
+			"type": "string",
+			"enum": ["Surface", "Battle", "Warehouse", "Armory", "Production", "Lock", "Space"]
+		}
+		"xCoord": {
+			"description": "Tile index of x",
+			"type": "integer"
+		},
+		"yCoord": {
+			"description": "Tile index of y",
+			"type": "integer"
+		},
+		"isNorthLegal": {
+			"description": "Can characters move North from this tile?"
+			"type": "boolean"
+		},
+		"isSouthLegal": {
+			"description": "Can characters move South from this tile?"
+			"type": "boolean"
+		},
+		"isEastLegal": {
+			"description": "Can characters move East from this tile?"
+			"type": "boolean"
+		},
+		"isWestLegal": {
+			"description": "Can characters move West from this tile?"
+			"type": "boolean"
+		},
+		"isDamaged": {
+			"description": "Can characters move onto this tile?"
+			"type": "boolean"
+		},
+		"isOccupied": {
+			"description": "Is a character or object on this tile?"
+			"type": "boolean"
+		},
+		"resourceCostType": {
+			"type": "string",
+			"enum": ["oxygen", "rockets", "metal", "energy", "biomass", "biodrone", "uranium"]
+		},
+		"resourceCostCount": {
+			"type": "integer"
+		},
+		"resourceYieldType": {
+			"type": "string",
+			"enum": ["oxygen", "rocket", "metal", "energy", "biomass", "biodrone", "uranium"]
+		},
+		"resourceYieldCount": {
+			"type": "integer"
+		},
+		"battleAction": {
+			"type": "string",
+			"enum": ["thermite", "shield", "biodrone", "satellite", "laser", "repair", "repairTwo", "rocket", "espionage", "counterEspionage", "takeover"]
+		},
+		"targetGunnerID": {
+			"type": "integer"
+		}
+	},
+	"required": ["type", "xCoord", "yCoord", "isNorthLegal", "isSouthLegal", "isEastLegal", "isWestLegal", "isDamaged", "isOccupied"]
+}

@@ -1,0 +1,33 @@
+{
+	"name": "Tiles",
+	"types": {
+		"Surface":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Battle":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Warehouse":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Armory":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Production":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Lock":{
+			"isDamaged":false,
+			"isOccupied":false
+		},
+		"Space":{
+			"isDamaged":false,
+			"isOccupied":false
+		}
+	}
+}
